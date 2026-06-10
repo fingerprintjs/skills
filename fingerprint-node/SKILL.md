@@ -21,7 +21,9 @@ decision coming straight from the client.
 1. **Install** `@fingerprint/node-sdk`.
 
 2. **Create one client** at startup with the secret key and region (`Region.Global` | `Region.EU`
-   | `Region.AP`, matching the workspace). See `snippets/client.js`.
+   | `Region.AP`, matching the workspace). Load `.env` (via `dotenv`) at the top of the module
+   that constructs the client, so `FINGERPRINT_SECRET_API_KEY` is set before it's read — plain
+   Node does not auto-load `.env`. See `snippets/client.js`.
 
 3. **Add a verification helper** that runs before sensitive handlers: given the `event_id`,
    call `client.getEvent(eventId)` and apply the checks below. See `snippets/verify.js`.
