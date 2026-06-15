@@ -9,19 +9,32 @@ skills/<id>/
   snippets/     # reference code the agent adapts to the target repo
 ```
 
-`role` is `frontend` or `backend`. The wizard selects skills by matching the detected
-stack (see `src/wizard/detect.ts`) against each skill's `frameworks`.
+`role` is `frontend`, `backend`, or `fullstack`. The wizard selects skills by matching the
+detected stack (see `src/wizard/detect.ts`) against each skill's `frameworks`.
 
 A full integration usually pairs a frontend skill (identification) with a backend skill
-(server-side verification) — identification alone is not secure.
+(server-side verification) — identification alone is not secure. `fullstack` skills cover both.
 
 ## Current skills
-- `fingerprint-react` — React frontend identification
-- `fingerprint-node` — Node/Express backend verification + fraud use-cases
 
-## Package names — v4 (verified on npm + docs.fingerprint.com)
-- Frontend (React): `@fingerprint/react` (v3.x package = v4 SDK)
-- Node server: `@fingerprint/node-sdk` (v7.x)
+Frontend (identification):
+- `fingerprint-react` — React
+- `fingerprint-vue` — Vue 3
+- `fingerprint-angular` — Angular
+- `fingerprint-svelte` — Svelte / SvelteKit
+
+Backend (server-side verification + fraud use-cases):
+- `fingerprint-node` — Node / Express
+- `fingerprint-python` — FastAPI / Django / Flask
+
+Fullstack (both):
+- `fingerprint-nextjs` — Next.js (client identification + server verification)
+
+## Package names — v4 (verified on npm/PyPI + docs.fingerprint.com)
+- React: `@fingerprint/react` · Vue: `@fingerprint/vue` · Angular: `@fingerprint/angular` · Svelte: `@fingerprint/svelte`
+- Node server: `@fingerprint/node-sdk` · Python server: `fingerprint-server-sdk` (PyPI)
+
+`skill.json` lists package **names only** — the installer resolves the current version (don't pin).
 
 The v4 SDKs use `event_id` (not `requestId`) and a **flat** event response
 (`event.identification.visitor_id`, `event.bot`, `event.vpn`, `event.replayed`, …) — not the

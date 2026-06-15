@@ -1,0 +1,8 @@
+{
+  "id": "fingerprint-angular",
+  "title": "Fingerprint — Angular frontend identification (v4)",
+  "role": "frontend",
+  "frameworks": ["angular"],
+  "packages": ["@fingerprint/angular"],
+  "envVars": ["FINGERPRINT_PUBLIC_API_KEY", "FINGERPRINT_REGION"]
+}

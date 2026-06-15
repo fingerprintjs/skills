@@ -1,0 +1,13 @@
+{
+  "id": "fingerprint-nextjs",
+  "title": "Fingerprint — Next.js identification + verification (v4)",
+  "role": "fullstack",
+  "frameworks": ["next"],
+  "packages": ["@fingerprint/react", "@fingerprint/node-sdk"],
+  "envVars": [
+    "NEXT_PUBLIC_FINGERPRINT_PUBLIC_API_KEY",
+    "NEXT_PUBLIC_FINGERPRINT_REGION",
+    "FINGERPRINT_SECRET_API_KEY",
+    "FINGERPRINT_REGION"
+  ]
+}

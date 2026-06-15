@@ -1,0 +1,8 @@
+{
+  "id": "fingerprint-python",
+  "title": "Fingerprint — Python backend verification (v4)",
+  "role": "backend",
+  "frameworks": ["fastapi", "django", "flask"],
+  "packages": ["fingerprint-server-sdk", "python-dotenv"],
+  "envVars": ["FINGERPRINT_SECRET_API_KEY", "FINGERPRINT_REGION"]
+}
