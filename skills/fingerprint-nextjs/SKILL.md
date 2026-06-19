@@ -10,6 +10,12 @@ the visitor and the **server verifies** the result. The browser never makes trus
 never holds the secret key — it only produces an `event_id`. Trust decisions happen on the server,
 which re-fetches the event from the Server API and applies the checks below.
 
+> **Verify against the docs first.** Package names, the client SDK API, and the v4 event field
+> names below can change — prefer the live docs over pre-trained knowledge. Confirm the React SDK
+> at https://docs.fingerprint.com/docs/react and the event shape against the Node Server SDK types
+> / OpenAPI schema (https://github.com/fingerprintjs/fingerprint-pro-server-api-openapi) or the
+> Fingerprint MCP event-schema resource. Index: https://docs.fingerprint.com/llms.txt.
+
 ## Packages
 - `@fingerprint/react` (v4) — browser identification (client components).
 - `@fingerprint/node-sdk` (v4) — Server API verification (Route Handlers / Server Actions).

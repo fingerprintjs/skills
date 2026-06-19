@@ -1,0 +1,26 @@
+{
+  "name": "fingerprint",
+  "description": "Integrate Fingerprint device identification and fraud prevention into your app (v4) — per-stack identification + server-side verification skills, plus /integrate and /get-started commands that detect your tech stack and apply the right skill.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Fingerprint",
+    "url": "https://fingerprint.com"
+  },
+  "homepage": "https://docs.fingerprint.com",
+  "repository": "https://github.com/fingerprintjs/skills",
+  "license": "MIT",
+  "keywords": [
+    "fingerprint",
+    "device-identification",
+    "fraud-prevention",
+    "smart-signals",
+    "bot-detection",
+    "react",
+    "vue",
+    "angular",
+    "svelte",
+    "nextjs",
+    "node",
+    "python"
+  ]
+}

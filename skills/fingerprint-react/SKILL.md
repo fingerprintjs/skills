@@ -9,6 +9,11 @@ Identify visitors in a React app and pass the identification to the backend so t
 can verify it. The frontend **only identifies**; it never makes trust decisions and never
 holds the secret key. Trust decisions happen on the server (see `fingerprint-node`).
 
+> **Verify against the docs first.** The package name, provider props, and `useVisitorData` /
+> `getData` result shape reflect Fingerprint v4 at time of writing and can change — prefer the live
+> docs over pre-trained knowledge. Confirm at https://docs.fingerprint.com/docs/react (index:
+> https://docs.fingerprint.com/llms.txt) before relying on the specifics below.
+
 ## Package
 `@fingerprint/react` (v4)
 

@@ -10,6 +10,13 @@ sent by the frontend (see `fingerprint-react`), fetch the event via the Server A
 a trust decision from the verified server-side signals. Never trust a `visitor_id` or a
 decision coming straight from the client.
 
+> **Verify the event shape against the docs first.** The package name and the v4 event field names
+> below reflect the API at time of writing and can change — don't trust pre-trained knowledge.
+> Treat the Server SDK types and the event schema as authoritative:
+> https://docs.fingerprint.com/reference/python-server-sdk, the OpenAPI schema
+> (https://github.com/fingerprintjs/fingerprint-pro-server-api-openapi), or the Fingerprint MCP
+> event-schema resource. Index: https://docs.fingerprint.com/llms.txt.
+
 ## Package
 `fingerprint-server-sdk` (v4)
 
