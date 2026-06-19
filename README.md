@@ -1,104 +1,76 @@
-# Fingerprint integration skills
+# Fingerprint skills for AI coding assistants
 
-Production-focused skills and commands that integrate [Fingerprint](https://fingerprint.com)
-device identification and fraud prevention into a project (v4 SDKs). Used two ways:
+Add [Fingerprint](https://fingerprint.com) device identification and fraud prevention to your app
+— correctly, securely, and in minutes — by letting your AI coding assistant do the wiring.
 
-- **As a Claude Code plugin** — install it and run `/integrate` or `/get-started` (below).
-- **By the Fingerprint CLI wizard** — `fingerprint integrate` detects the stack and feeds the
-  matching skill to the agent.
+This is a [Claude Code](https://code.claude.com) plugin: a set of expert **skills** and
+**commands** that teach the assistant how to integrate Fingerprint into *your* stack. Instead of
+copy-pasting from docs and hoping the snippet matches your framework, you run one command and the
+assistant detects your stack, installs the right SDK, wires up identification, and adds the
+server-side verification that makes it actually secure.
 
-Everything here targets **production usage** — no staging hosts or non-default endpoints are baked
-into the snippets.
+## Why use it
 
-## Layout
+- **It picks the right integration for your stack.** React, Vue, Angular, Svelte, Next.js, Node,
+  or Python — the assistant detects what you're using and applies the matching guide. No wrong
+  snippets, no guesswork.
+- **Secure by default.** Identification in the browser is only half the job. These skills always
+  pair it with **server-side verification** and keep your secret key off the client — the part
+  most hand-rolled integrations get wrong.
+- **Always current, never hallucinated.** SDKs and APIs change between versions. Every skill points
+  the assistant at Fingerprint's live documentation and tells it to confirm package names, options,
+  and event fields against the source — so you get today's API, not a stale guess.
+- **Beyond install.** A guided `/get-started` flow walks you through the full Fingerprint setup:
+  reading Smart Signals, protecting against ad blockers, building rules, tagging events, and locking
+  down your public key.
 
-```
-skills/<id>/
-  skill.json    # metadata: id, role, frameworks, packages, env vars
-  SKILL.md      # the integration guide the agent follows
-  snippets/     # reference code the agent adapts to the target repo
-commands/<name>.md  # user-invocable slash commands
-.claude-plugin/     # plugin + marketplace manifests
-```
+## Install
 
-`role` is `frontend`, `backend`, `fullstack`, or `enhancement`. The CLI wizard selects per-stack
-skills by matching the detected stack (see `fingerprint-cli`'s `src/wizard/detect.ts`) against each
-skill's `frameworks`. `enhancement` skills are not auto-selected by the wizard — they cover the
-post-install Get Started steps and are applied via `/get-started` or auto-loaded by their
-description.
-
-A full integration pairs a **frontend** skill (identification) with a **backend** skill
-(server-side verification) — identification alone is not secure. `fullstack` skills cover both.
-
-## Installing as a Claude Code plugin
+In Claude Code:
 
 ```
 /plugin marketplace add fingerprintjs/skills
 /plugin install fingerprint@fingerprint
 ```
 
-Then in any project:
+Then, in any project:
 
 ```
-/integrate        # detect the stack and wire up identification + verification
-/get-started      # walk the full Get Started checklist, applying a skill per step
+/integrate      # detect your stack and wire up identification + server-side verification
+/get-started    # walk the full Fingerprint setup, one guided step at a time
 ```
 
-## Commands
+You'll need a Fingerprint account for your API keys — sign up at
+[dashboard.fingerprint.com](https://dashboard.fingerprint.com).
 
-| Command          | What it does                                                                                          |
-| ---------------- | ----------------------------------------------------------------------------------------------------- |
-| `/integrate`     | Detects the project's stack and applies the matching skill(s) — frontend identification + backend verification. Optional path argument. |
-| `/get-started`   | Detects what's already integrated, then guides the user through the remaining Get Started steps (Smart Signals, ad-blocker protection, rules, tagging, key protection), applying the matching skill for each. |
+## What's covered
 
-## Skills
+**Integration** — identify visitors on the frontend and verify them on the backend:
 
-### Integration (per stack)
+| Your stack | What gets set up |
+| --- | --- |
+| React · Vue / Nuxt · Angular · Svelte / SvelteKit | Visitor identification in the browser |
+| Node (Express, Fastify, Koa, Nest, Hapi) · Python (FastAPI, Django, Flask) | Server-side verification + fraud checks |
+| Next.js | Both halves in one app (client identify + server verify) |
 
-Frontend (identification):
-- `fingerprint-react` — React
-- `fingerprint-vue` — Vue 3 / Nuxt
-- `fingerprint-angular` — Angular
-- `fingerprint-svelte` — Svelte / SvelteKit
+**Get Started** — turn a basic install into production-grade protection:
 
-Backend (server-side verification + fraud use-cases):
-- `fingerprint-node` — Node / Express / Fastify / Koa / Nest / Hapi
-- `fingerprint-python` — FastAPI / Django / Flask
+- **Smart Signals** — act on bot, VPN, proxy, tampering, velocity, and more, server-side.
+- **Ad-blocker protection** — serve the agent from your own domain for maximum accuracy.
+- **Rules Engine** — block or allow visitors with no-code rules.
+- **Event tagging** — attach your own user / account / order IDs to identifications.
+- **Public key protection** — restrict your key to your own origins.
 
-Fullstack (both):
-- `fingerprint-nextjs` — Next.js (client identification + server verification)
+## How it works
 
-### Get Started (advanced, post-install)
+You ask in plain language ("add Fingerprint to this app") or run `/integrate`. The assistant reads
+your project to detect the framework, loads the matching skill, and follows it — installing the SDK,
+adding the provider and identification calls on the client, and the verification logic on the
+server, all matched to your existing code style. It confirms the current API against Fingerprint's
+docs as it goes, so the result is accurate and ready for production.
 
-These mirror the dashboard's **Get Started** checklist and are applied via `/get-started`:
-- `fingerprint-smart-signals` — *Access detailed insights*: act on the full Smart-Signals set
-- `fingerprint-proxy-integration` — *Protect against ad blockers*: custom subdomain / proxy
-- `fingerprint-rules-engine` — *Build your first rule*: no-code automatic protection
-- `fingerprint-tagging` — *Tag an event with your data*: attach user/account/order IDs
-- `fingerprint-request-filtering` — *Protect your public API key*: allowed origins / block lists
+## Learn more
 
-## Verify against the docs (don't trust pre-trained knowledge)
-
-Like the Cloudflare and Stripe skills, these bias toward **retrieval over baked-in knowledge**.
-Package names, SDK APIs (e.g. the v4 `endpoints` option that replaced `scriptUrlPattern`), and the
-event response shape change between versions — every skill points at the authoritative source and
-tells the agent to confirm before relying on specifics.
-
-Authoritative sources:
-- Docs index: https://docs.fingerprint.com/llms.txt
-- v3 → v4 migration: https://docs.fingerprint.com/reference/migrating-from-v3-to-v4
-- Server API event schema (OpenAPI): https://github.com/fingerprintjs/fingerprint-pro-server-api-openapi
-- The Fingerprint MCP **event-schema resource** (authoritative for field questions)
-
-## Package names — v4 (confirm the current version against the docs)
-- React: `@fingerprint/react` · Vue: `@fingerprint/vue` · Angular: `@fingerprint/angular` · Svelte: `@fingerprint/svelte`
-- Node server: `@fingerprint/node-sdk` · Python server: `fingerprint-server-sdk` (PyPI)
-
-`skill.json` lists package **names only** — the installer resolves the current version (don't pin).
-
-The v4 SDKs use `event_id` (not `requestId`). The exact event response shape (flat vs. nested,
-`snake_case` vs. `camelCase`) should be **confirmed against the event schema** above before coding,
-not assumed.
-
-> Legacy v3 packages (do **not** use for new integrations): `@fingerprintjs/fingerprintjs-pro-react`,
-> `@fingerprintjs/fingerprintjs-pro-server-api`.
+- Fingerprint docs: https://docs.fingerprint.com
+- Get an account: https://dashboard.fingerprint.com
+- About Agent Skills: https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills
