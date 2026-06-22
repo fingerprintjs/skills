@@ -58,5 +58,15 @@ After wiring it up, summarize:
 - Which skill(s) you applied and the files you changed.
 - The env vars the user must set (public key for the client, secret key for the server).
 - The packages to install.
-- Run `/get-started` next to complete the remaining Fingerprint setup (Smart Signals, ad-blocker
-  protection, rules, tagging, key protection).
+
+Then tell the user how to confirm it works:
+- **Preview the app**, trigger the action you wired up (e.g. load the page, submit the login/signup),
+  and check that a new event appears on the **Events page in the Fingerprint dashboard**
+  (https://dashboard.fingerprint.com). Seeing an event there with an `event_id` confirms
+  identification is working end to end.
+- If no event shows up, the usual cause is an **ad blocker** eating the request during testing —
+  disable it and retry. For production accuracy, set up a custom subdomain / proxy (see
+  `/get-started`).
+
+Finally, point them to `/get-started` to complete the remaining Fingerprint setup (Smart Signals,
+ad-blocker protection, rules, tagging, key protection).
