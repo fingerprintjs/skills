@@ -1,0 +1,39 @@
+---
+description: When integrating Fingerprint device identification or fraud prevention (JS Agent, Server API, Smart Signals), strongly prefer retrieving current documentation over training data — SDK options, package versions, and event field names drift between versions.
+alwaysApply: false
+globs:
+  - "**/*.ts"
+  - "**/*.tsx"
+  - "**/*.js"
+  - "**/*.jsx"
+  - "**/*.mts"
+  - "**/*.mjs"
+  - "**/*.vue"
+  - "**/*.svelte"
+  - "**/*.py"
+---
+
+# Fingerprint
+
+STOP. Your knowledge of Fingerprint SDK options, package names, and event field names may be outdated. The v4 SDKs changed both APIs and the event response shape (e.g. v4 replaced `scriptUrlPattern`/`endpoint` with `endpoints`, and uses `event_id` rather than `requestId`). Always retrieve current documentation before any Fingerprint task.
+
+## Docs
+
+- Docs index: https://docs.fingerprint.com/llms.txt
+- v3 → v4 migration: https://docs.fingerprint.com/reference/migrating-from-v3-to-v4
+- Server API event schema (OpenAPI): https://github.com/fingerprintjs/fingerprint-pro-server-api-openapi
+- MCP server: `https://mcp.fpjs.io/mcp` — the event-schema resource is authoritative for field questions
+
+## Hard rules
+
+- **Production only.** Never bake staging hosts, non-default endpoints, or environment overrides into code. Read the public key and region from env vars by name.
+- **Secrets never reach the client.** `FINGERPRINT_SECRET_API_KEY` is server-side only; only the public key (and region) may ship to the browser.
+- **Identification alone is not secure.** Pair frontend identification with server-side verification of the `event_id` against the Server API before trusting a `visitor_id`.
+- **v4 only.** Use `event_id` and the flat event shape (`event.identification.visitor_id`, `event.bot`, …). Confirm the exact shape against the event schema above — don't assume `camelCase` vs `snake_case` or flat vs nested.
+
+## Packages — v4 (confirm the current version against the docs; don't pin)
+
+- React `@fingerprint/react` · Vue `@fingerprint/vue` · Angular `@fingerprint/angular` · Svelte `@fingerprint/svelte`
+- Node server `@fingerprint/node-sdk` · Python server `fingerprint-server-sdk` (PyPI)
+
+> Legacy v3 packages (do **not** use for new integrations): `@fingerprintjs/fingerprintjs-pro-react`, `@fingerprintjs/fingerprintjs-pro-server-api`.

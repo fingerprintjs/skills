@@ -1,7 +1,9 @@
 {
+  "$schema": "https://code.claude.com/schemas/marketplace.json",
   "name": "fingerprint",
   "owner": {
-    "name": "Fingerprint"
+    "name": "Fingerprint",
+    "url": "https://fingerprint.com"
   },
   "plugins": [
     {

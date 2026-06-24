@@ -1,0 +1,10 @@
+{
+  "name": "fingerprint",
+  "version": "1.0.0",
+  "description": "Integrate Fingerprint device identification and fraud prevention into your app (v4): per-stack identification + server-side verification skills, plus /integrate and /get-started commands",
+  "author": {
+    "name": "Fingerprint",
+    "url": "https://fingerprint.com"
+  },
+  "keywords": ["fingerprint", "device-identification", "fraud-prevention", "smart-signals", "bot-detection", "react", "vue", "angular", "svelte", "nextjs", "node", "python"]
+}
