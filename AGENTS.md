@@ -1,9 +1,16 @@
 # Repository guide for AI agents
 
 This repo holds Fingerprint **integration** skills (`skills/<id>/`) and slash commands
-(`commands/<name>.md`), packaged as a Claude Code plugin (`.claude-plugin/`). It is also consumed
-by the Fingerprint CLI wizard, which clones this repo and copies matched skills into a target
-project's `.claude/skills/<id>/`.
+(`commands/<name>.md`). The skill folders follow the Agent Skills standard and are shared across
+agents; per-agent packaging lives alongside them: a Claude Code plugin (`.claude-plugin/`), a Cursor
+plugin + rule (`.cursor-plugin/`, `rules/`), and a bundled remote MCP server (`.mcp.json`, the
+Fingerprint MCP at `https://mcp.fpjs.io/mcp`). It is also consumed by the Fingerprint CLI wizard,
+which clones this repo and copies matched skills into a target project's `.claude/skills/<id>/`.
+
+When editing a skill, change only `skills/<id>/` — never duplicate skill content into the per-agent
+manifests. When adding install methods or MCP servers, update both `README.md` and the relevant
+manifest. Keep `rules/fingerprint.mdc` in sync with the hard rules below (it's the Cursor-facing
+restatement of them).
 
 ## Hard rules
 

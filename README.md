@@ -26,7 +26,11 @@ server-side verification that makes it actually secure.
 
 ## Install
 
-In Claude Code:
+These skills work with any agent that supports the [Agent Skills](https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills) standard — Claude Code, Cursor, OpenCode, OpenAI Codex, and Pi.
+
+### Claude Code
+
+Install using the [plugin marketplace](https://code.claude.com/docs/en/discover-plugins#add-from-github):
 
 ```
 /plugin marketplace add fingerprintjs/skills
@@ -42,6 +46,30 @@ Then, in any project:
 
 You'll need a Fingerprint account for your API keys — sign up at
 [dashboard.fingerprint.com](https://dashboard.fingerprint.com).
+
+### Cursor
+
+Install from the Cursor Marketplace, or add manually via **Settings > Rules > Add Rule > Remote Rule (Github)** with `fingerprintjs/skills`.
+
+### npx skills
+
+Install using the [`npx skills`](https://skills.sh) CLI — works across all supported agents:
+
+```
+npx skills add https://github.com/fingerprintjs/skills
+```
+
+### Clone / Copy
+
+Clone this repo and copy the skill folders into the appropriate directory for your agent:
+
+| Agent | Skill Directory | Docs |
+|-------|-----------------|------|
+| Claude Code | `~/.claude/skills/` | [docs](https://code.claude.com/docs/en/skills) |
+| Cursor | `~/.cursor/skills/` | [docs](https://cursor.com/docs/context/skills) |
+| OpenCode | `~/.config/opencode/skills/` | [docs](https://opencode.ai/docs/skills/) |
+| OpenAI Codex | `~/.codex/skills/` | [docs](https://developers.openai.com/codex/skills/) |
+| Pi | `~/.pi/agent/skills/` | [docs](https://github.com/badlogic/pi-mono/tree/main/packages/coding-agent#skills) |
 
 ## What's covered
 
@@ -68,6 +96,14 @@ your project to detect the framework, loads the matching skill, and follows it �
 adding the provider and identification calls on the client, and the verification logic on the
 server, all matched to your existing code style. It confirms the current API against Fingerprint's
 docs as it goes, so the result is accurate and ready for production.
+
+## MCP Server
+
+The plugin bundles Fingerprint's remote [MCP server](https://docs.fingerprint.com/docs/mcp-server)
+(`https://mcp.fpjs.io/mcp`), so once it's installed the assistant can read your Fingerprint
+workspace directly — searching identification events and Smart Signals, and managing environments
+and API keys — instead of relying only on the skills. It connects over OAuth in the browser and
+needs a Fingerprint account with permission to create API keys.
 
 ## Learn more
 

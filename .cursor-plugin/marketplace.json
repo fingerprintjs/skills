@@ -1,0 +1,13 @@
+{
+  "name": "fingerprint",
+  "owner": {
+    "name": "Fingerprint"
+  },
+  "plugins": [
+    {
+      "name": "fingerprint",
+      "source": "./",
+      "description": "Fingerprint integration skills + commands for the Cursor agent"
+    }
+  ]
+}
