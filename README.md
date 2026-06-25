@@ -30,18 +30,22 @@ These skills work with any agent that supports the [Agent Skills](https://www.an
 
 ### Claude Code
 
-Install using the [plugin marketplace](https://code.claude.com/docs/en/discover-plugins#add-from-github):
+**Terminal (CLI):** run the [`claude`](https://code.claude.com) CLI, then install using the [plugin marketplace](https://code.claude.com/docs/en/discover-plugins#add-from-github):
 
 ```
 /plugin marketplace add fingerprintjs/skills
 /plugin install fingerprint@fingerprint
 ```
 
-Then, in any project:
+After installing, run `/reload-plugins` to activate the plugin.
+
+**Desktop app (Mac/Windows):** the desktop app uses a graphical plugin manager instead of slash commands. Open the **Customize** menu → **Plugins**, add the marketplace source `fingerprintjs/skills`, then select the **fingerprint** plugin and click **Install**. **Restart the app** for the plugin to take effect.
+
+Plugin skills are namespaced by the plugin name, so they're invoked as `/fingerprint:<command>`. Then, in any project:
 
 ```
-/integrate      # detect your stack and wire up identification + server-side verification
-/get-started    # walk the full Fingerprint setup, one guided step at a time
+/fingerprint:integrate      # detect your stack and wire up identification + server-side verification
+/fingerprint:get-started    # walk the full Fingerprint setup, one guided step at a time
 ```
 
 You'll need a Fingerprint account for your API keys — sign up at
@@ -49,7 +53,7 @@ You'll need a Fingerprint account for your API keys — sign up at
 
 ### Cursor
 
-Install from the Cursor Marketplace, or add manually via **Settings > Rules > Add Rule > Remote Rule (Github)** with `fingerprintjs/skills`.
+Open Cursor **Settings → Plugins** and either click **Browse Marketplace** to find Fingerprint, or paste the repo link `https://github.com/fingerprintjs/skills` into the **Pasted Link** field to add it directly. Then select the **fingerprint** plugin to install it. It's also listed in the [Cursor directory](https://cursor.directory/plugins/fingerprint).
 
 ### npx skills
 

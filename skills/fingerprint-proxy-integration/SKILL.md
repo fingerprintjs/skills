@@ -35,11 +35,17 @@ its script from** and the **`endpoints`** value, not your application logic.
     `FingerprintProvider` `endpoints` prop). See `snippets/subdomain-options.js`.
 
 ## Custom subdomain
-1. In the dashboard, open the environment's integration settings and add a **custom subdomain**
-   (e.g. `metrics.yourdomain.com`) — it must be on the same site as your app.
-2. Create the **CNAME** record it tells you to, at your DNS provider, and wait for it to verify.
+1. In the dashboard, go to **Settings → Subdomains → Add subdomain** and register a **custom
+   subdomain** (e.g. `metrics.yourdomain.com`) — it must be on the same site as your app.
+2. Add the **CNAME** record it gives you at your DNS provider to verify domain ownership and let
+   the SSL certificate be issued. Once the certificate shows **Issued**, add the two **A records**
+   the dashboard provides to finish the connection. (You can sanity-check with `dig <host> +short`.)
 3. Set `endpoints` to your subdomain (and, for CDN installs, import the script from it). See
    `snippets/subdomain-options.js`.
+
+> DNS/cert validation can take up to 24 hours, and the subdomain expires if records aren't set
+> within 14 days. This DNS step is outside the SDK — if the user is blocked on verification, it's a
+> DNS-provider/propagation issue, not a code problem; they can set `endpoints` once it verifies.
 
 ## Proxy integration (max accuracy)
 1. Deploy one of Fingerprint's proxy integrations at your edge — **Cloudflare Worker**, **AWS
