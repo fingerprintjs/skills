@@ -30,18 +30,20 @@ These skills work with any agent that supports the [Agent Skills](https://www.an
 
 ### Claude Code
 
-Install using the [plugin marketplace](https://code.claude.com/docs/en/discover-plugins#add-from-github):
+Run the [`claude`](https://code.claude.com) CLI in your terminal, then install using the [plugin marketplace](https://code.claude.com/docs/en/discover-plugins#add-from-github):
 
 ```
 /plugin marketplace add fingerprintjs/skills
 /plugin install fingerprint@fingerprint
 ```
 
-Then, in any project:
+After installing, run `/reload-plugins` to activate the plugin.
+
+Plugin skills are namespaced by the plugin name, so they're invoked as `/fingerprint:<command>`. Then, in any project:
 
 ```
-/integrate      # detect your stack and wire up identification + server-side verification
-/get-started    # walk the full Fingerprint setup, one guided step at a time
+/fingerprint:integrate      # detect your stack and wire up identification + server-side verification
+/fingerprint:get-started    # walk the full Fingerprint setup, one guided step at a time
 ```
 
 You'll need a Fingerprint account for your API keys — sign up at
