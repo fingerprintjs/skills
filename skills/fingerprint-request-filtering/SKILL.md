@@ -13,13 +13,13 @@ This is configured in the dashboard against the environment's public key — the
 beyond keeping the agent's origin consistent.
 
 ## Set up request filtering (dashboard)
-1. Open the environment's **API keys / request filtering** settings for the public key.
-2. Add an **allowed origins** rule listing the exact origins your app loads the agent from
-   (e.g. `https://app.yourdomain.com`, plus `http://localhost:3000` for local dev). Requests from
-   other origins are rejected.
-3. Optionally restrict by **header** rules and add **block lists** for origins/IPs you never want
-   to accept.
+1. In the dashboard, go to **Security → Web**.
+2. Under **Websites**, click **Configure** and set an **allowlist** of the exact origins your app
+   loads the agent from (e.g. `https://app.yourdomain.com`, plus `http://localhost:3000` for local
+   dev). Requests from other origins are rejected. (Use a blocklist instead to deny specific origins.)
+3. Optionally, under **Forbidden HTTP Headers**, click **Add rule** to restrict by header.
 4. Save and test: a request from an allowed origin succeeds; one from an unlisted origin is blocked.
+   Rule changes can take up to ~5 minutes to take effect.
 
 ## How to apply
 1. **Enumerate every origin** that legitimately loads the agent: production domain(s), any preview
