@@ -22,10 +22,10 @@ def verify_event(event_id):
     if not ident or not ident.visitor_id:
         return {"ok": False, "reason": "not_found"}
 
-    # Replay / freshness
-    if ident.replayed:
+    # Replay / freshness — `replayed` and `timestamp` are root-level on the event, not on identification
+    if event.replayed:
         return {"ok": False, "reason": "replayed"}
-    if time.time() * 1000 - ident.timestamp > MAX_AGE_MS:
+    if time.time() * 1000 - event.timestamp > MAX_AGE_MS:
         return {"ok": False, "reason": "stale"}
 
     # Identification confidence

@@ -42,17 +42,18 @@ decision coming straight from the client.
 `get_event` returns the event object directly:
 - `event.identification.visitor_id` — the trusted visitor id
 - `event.identification.confidence.score` — 0..1 (probability of a false-positive identification)
-- `event.identification.timestamp` — Unix ms of the event
-- `event.identification.replayed` — `True` if the payload was replayed
+- `event.timestamp` — Unix ms of the event (root-level, **not** under `identification`)
+- `event.replayed` — `True` if the payload was replayed (root-level)
 - `event.bot` — `BotResult.NOT_DETECTED` | `good` | `bad`
 - `event.vpn`, `event.proxy`, `event.tampering`, `event.incognito` — booleans
-- `event.suspect_score` — weighted Smart-Signals score
-- `event.velocity`, `event.ip_blocklist` — for abuse / ATO logic
+- `event.suspect_score` — weighted Smart-Signals score (integer)
+- `event.velocity` (object), `event.ip_blocklist` (object: `attack_source`, `email_spam`,
+  `tor_node`) — for abuse / ATO logic
 
 ## Verification checks (do all of them)
 - **Found:** `event.identification.visitor_id` exists.
-- **Replay / freshness:** reject if `event.identification.replayed` is `True`, or if the event
-  `timestamp` is older than your window (e.g. 2 minutes) — prevents reuse of an old `event_id`.
+- **Replay / freshness:** reject if `event.replayed` is `True`, or if `event.timestamp` is older
+  than your window (e.g. 2 minutes) — prevents reuse of an old `event_id`.
 - **Confidence:** require `event.identification.confidence.score >= 0.9` for the action.
 - **Smart signals** (fail-closed for high-risk actions): `event.bot != BotResult.NOT_DETECTED`,
   `event.vpn`, `event.proxy`, `event.tampering`.

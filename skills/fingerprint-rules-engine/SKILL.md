@@ -66,8 +66,8 @@ Read it and honor it:
 ## Verify the rule is actually working
 1. Trigger a request that should match (e.g. from a flagged bot/IP, or temporarily loosen the
    condition).
-2. Fetch that event's `requestId` via `getEvent` **with `ruleset_id` passed** — not a plain
-   `getEvent` call, which won't include `rule_action`.
+2. Fetch that event via `getEvent` **with `ruleset_id` passed** — not a plain `getEvent` call,
+   which won't include `rule_action`.
 3. Confirm `rule_action.type` and `rule_action.rule_id` match the rule you built.
 
 ## How to apply

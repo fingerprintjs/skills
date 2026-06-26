@@ -23,11 +23,11 @@ Each Smart Signal is a top-level field on the event. The web-relevant set:
 | `bot` | `"bad" \| "good" \| "not_detected"` | Block `"bad"` on protected endpoints |
 | `vpn` | behind a VPN | Step-up / score for high-risk flows |
 | `proxy` | behind a public proxy | Step-up / score |
-| `tampering` | request payload tampered with | Reject for sensitive actions |
+| `tampering` | bool — anomalous browser signature / anti-detect browser | Reject for sensitive actions |
 | `incognito` | private browsing | Score; don't hard-block alone |
-| `ip_blocklist` | IP on a known-malicious list | Block or step-up |
-| `velocity` | events/identifications per interval for this visitor | Rate-limit abuse / ATO |
-| `suspect_score` | weighted aggregate of Smart Signals | Threshold-based routing |
+| `ip_blocklist` | object: `attack_source`, `email_spam`, `tor_node` (IP on known-malicious lists) | Block or step-up on any sub-flag |
+| `velocity` | object of interval counts (`5_minutes`/`1_hour`/`24_hours`) per visitor/IP/linked_id | Rate-limit abuse / ATO |
+| `suspect_score` | integer — weighted aggregate of Smart Signals | Threshold-based routing |
 | `location_spoofing` | GPS/timezone spoofing | Score for geo-gated actions |
 | `developer_tools` | devtools open | Score for scraping/automation |
 | `virtual_machine` | running in a VM | Score |

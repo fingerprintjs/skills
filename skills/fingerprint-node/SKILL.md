@@ -43,8 +43,9 @@ decision coming straight from the client.
 - `event.replayed` — `true` if the payload was replayed
 - `event.bot` — `"bad" | "good" | "not_detected"`
 - `event.vpn`, `event.proxy`, `event.tampering`, `event.incognito` — booleans
-- `event.suspect_score` — weighted Smart-Signals score
-- `event.velocity`, `event.ip_blocklist` — for abuse / ATO logic
+- `event.suspect_score` — weighted Smart-Signals score (integer)
+- `event.velocity` (object), `event.ip_blocklist` (object: `attack_source`, `email_spam`,
+  `tor_node`) — for abuse / ATO logic
 
 ## Verification checks (do all of them)
 - **Found:** `event.identification.visitor_id` exists.

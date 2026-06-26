@@ -44,8 +44,7 @@ After installing, run `/reload-plugins` to activate the plugin.
 Plugin skills are namespaced by the plugin name, so they're invoked as `/fingerprint:<command>`. Then, in any project:
 
 ```
-/fingerprint:integrate      # detect your stack and wire up identification + server-side verification
-/fingerprint:get-started    # walk the full Fingerprint setup, one guided step at a time
+/fingerprint:get-started    # detect your stack, install identification + server-side verification, and walk the full setup
 ```
 
 You'll need a Fingerprint account for your API keys — sign up at
@@ -95,7 +94,7 @@ Clone this repo and copy the skill folders into the appropriate directory for yo
 
 ## How it works
 
-You ask in plain language ("add Fingerprint to this app") or run `/integrate`. The assistant reads
+You ask in plain language ("add Fingerprint to this app") or run `/get-started`. The assistant reads
 your project to detect the framework, loads the matching skill, and follows it — installing the SDK,
 adding the provider and identification calls on the client, and the verification logic on the
 server, all matched to your existing code style. It confirms the current API against Fingerprint's

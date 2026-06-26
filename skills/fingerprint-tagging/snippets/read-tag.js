@@ -6,7 +6,7 @@ async function readTaggedEvent(eventId) {
   const event = await fingerprint.getEvent(eventId)
   if (!event.identification?.visitor_id) return { ok: false, reason: 'not_found' }
 
-  const tag = event.tag ?? {} // the JSON you passed to getData({ tag })
+  const tag = event.tags ?? {} // the JSON you passed to getData({ tag }) — server field is `tags`
   const linkedId = event.linked_id ?? null // the string you passed to getData({ linkedId })
 
   // Example: confirm the order the client claims matches the tagged order.

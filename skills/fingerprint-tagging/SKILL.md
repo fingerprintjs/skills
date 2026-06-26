@@ -11,9 +11,12 @@ can join Fingerprint's `visitor_id` and signals with your business data — in t
 webhooks, and in dashboard search.
 
 > **Verify against the docs first.** How `tag` / `linkedId` are passed (the `getData` argument
-> shape) and how they appear on the server event (`event.tag` / `event.linked_id`) reflect v4 at
+> shape) and how they appear on the server event (`event.tags` / `event.linked_id`) reflect v4 at
 > time of writing and can change — confirm against the SDK docs and the event schema before relying
 > on the specifics. Index: https://docs.fingerprint.com/llms.txt.
+>
+> Note the client→server name change: you send **`tag`** in the client `getData(...)` call, but it
+> comes back on the server event as **`event.tags`** (plural). `linkedId` → `event.linked_id`.
 
 ## Two tools
 - **`tag`** — arbitrary JSON metadata stored on the event (e.g. `{ userId, orderId, action }`).
@@ -42,7 +45,7 @@ See `snippets/identify-with-tag.jsx` (client) and `snippets/read-tag.js` (server
 2. **Put identifiers in `linkedId`, descriptive context in `tag`.** `linkedId` is what you'll
    filter/group by; `tag` is the payload you read back.
 3. **Send the `event_id` to your backend as usual.** The tag and linkedId come back on the
-   server-side event from `getEvent(eventId)` (`event.tag`, `event.linked_id`) — verify the event
+   server-side event from `getEvent(eventId)` (`event.tags`, `event.linked_id`) — verify the event
    first, then trust the tag you yourself set.
 4. **Never put secrets or sensitive PII in a tag** — tags are set from the browser and are visible
    in the dashboard. Use opaque ids (`user_123`), not emails or tokens.
@@ -51,7 +54,7 @@ See `snippets/identify-with-tag.jsx` (client) and `snippets/read-tag.js` (server
 
 ## Verify it worked
 After wiring it up, trigger the tagged action once and confirm the tag appears: search recent
-events in the dashboard (or via `search_events`) and check `event.tag` / `event.linked_id`. This
+events in the dashboard (or via `search_events`) and check `event.tags` / `event.linked_id`. This
 is exactly what the Get Started step checks for.
 
 ## Framework notes
