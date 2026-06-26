@@ -13,7 +13,9 @@ function evaluateSignals(event, { risk = 'high' } = {}) {
   const networkFlags = []
   if (event.vpn) networkFlags.push('vpn')
   if (event.proxy) networkFlags.push('proxy')
-  if (event.ip_blocklist) networkFlags.push('ip_blocklist')
+  // ip_blocklist is an object of flags, always present — check the sub-fields, not truthiness.
+  const ipbl = event.ip_blocklist
+  if (ipbl && (ipbl.attack_source || ipbl.email_spam || ipbl.tor_node)) networkFlags.push('ip_blocklist')
   if (networkFlags.length) {
     return risk === 'high'
       ? { decision: 'block', reasons: networkFlags }

@@ -21,4 +21,4 @@ export const fingerprintLoadOptions = {
 // The script download URL is the import path (your subdomain), and `endpoints` is passed to start().
 //   const fpPromise = import('https://metrics.yourdomain.com/web/v4/PUBLIC_API_KEY')
 //     .then(Fingerprint => Fingerprint.start({ endpoints: 'https://metrics.yourdomain.com' }))
-//   const result = await (await fpPromise).get()  // result.visitorId
+//   const result = await (await fpPromise).get()  // result.visitor_id, result.event_id

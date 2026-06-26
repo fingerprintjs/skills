@@ -32,9 +32,11 @@ restatement of them).
 
 - Each skill is `skills/<id>/` with `skill.json` (metadata), `SKILL.md` (frontmatter `name` +
   `description`, then the guide), and optional `snippets/`.
-- `role`: `frontend` | `backend` | `fullstack` | `enhancement`. The CLI wizard only auto-selects
-  the first three (matched by framework); `enhancement` skills are for the Get Started flow and
-  are reached via `/get-started` or auto-loaded by their `description`.
+- `role`: `frontend` | `backend` | `fullstack` | `enhancement` | `orchestrator`. The CLI wizard
+  only auto-selects the first three (matched by framework); `enhancement` skills are for the Get
+  Started flow, and the single `orchestrator` skill (`fingerprint-get-started`) detects the stack
+  and delegates to the others. Both are reached via `/get-started` or auto-loaded by their
+  `description`.
 - `skill.json` `packages` lists names only (no version pins). The CLI allowlists installable
   packages (`@fingerprint/*`, `dotenv`, `python-dotenv`, `fingerprint-server-sdk`) — adding a new
   dependency means updating that allowlist in `fingerprint-cli`.

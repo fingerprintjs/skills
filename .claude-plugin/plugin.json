@@ -1,6 +1,6 @@
 {
   "name": "fingerprint",
-  "description": "Integrate Fingerprint device identification and fraud prevention into your app (v4) — per-stack identification + server-side verification skills, plus /integrate and /get-started commands that detect your tech stack and apply the right skill.",
+  "description": "Integrate Fingerprint device identification and fraud prevention into your app — per-stack identification + server-side verification skills, plus a /get-started command that detects your tech stack and walks the full setup.",
   "version": "1.0.0",
   "author": {
     "name": "Fingerprint",
