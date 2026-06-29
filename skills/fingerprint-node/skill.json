@@ -1,6 +1,6 @@
 {
   "id": "fingerprint-node",
-  "title": "Fingerprint — Node/Express backend verification (v4)",
+  "title": "Fingerprint — Node (Server API)",
   "role": "backend",
   "frameworks": ["express"],
   "packages": ["@fingerprint/node-sdk", "dotenv"],

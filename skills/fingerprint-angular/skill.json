@@ -1,6 +1,6 @@
 {
   "id": "fingerprint-angular",
-  "title": "Fingerprint — Angular frontend identification (v4)",
+  "title": "Fingerprint — Angular",
   "role": "frontend",
   "frameworks": ["angular"],
   "packages": ["@fingerprint/angular"],

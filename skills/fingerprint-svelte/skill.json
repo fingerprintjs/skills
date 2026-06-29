@@ -1,6 +1,6 @@
 {
   "id": "fingerprint-svelte",
-  "title": "Fingerprint — Svelte frontend identification (v4)",
+  "title": "Fingerprint — Svelte",
   "role": "frontend",
   "frameworks": ["svelte"],
   "packages": ["@fingerprint/svelte"],
