@@ -18,7 +18,7 @@ decision coming straight from the client.
 > event-schema resource. Index: https://docs.fingerprint.com/llms.txt.
 
 ## Package
-`@fingerprint/node-sdk` (v4)
+`@fingerprint/node-sdk` — install the latest version.
 
 ## Env var
 - `FINGERPRINT_SECRET_API_KEY` — the secret key. Server-side only; never sent to the browser.

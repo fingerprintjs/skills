@@ -1,13 +1,14 @@
 ---
 name: fingerprint-angular
-description: Add Fingerprint visitor identification to an Angular frontend (v4 SDK) and send the event_id to the backend for verification.
+description: Add Fingerprint visitor identification to an Angular frontend. The browser produces a visitorId and a single-use event_id; verifying that event_id server-side is a separate step (see fingerprint-node).
 ---
 
 # Fingerprint — Angular frontend identification (v4)
 
-Identify visitors in an Angular app and pass the identification to the backend so the server
-can verify it. The frontend **only identifies**; it never makes trust decisions and never
-holds the secret key. Trust decisions happen on the server (see `fingerprint-node`).
+This skill is **identification only**. It identifies visitors in an Angular app and produces a
+single-use `event_id`. The frontend never makes trust decisions and never holds the secret key —
+it just hands the `event_id` to your backend. Verifying that `event_id` and making trust decisions
+happen on the server, which is a separate skill (see `fingerprint-node`).
 
 > **Verify against the docs first.** The package name, `provideFingerprint` options, and
 > `getVisitorData` result shape reflect Fingerprint v4 at time of writing and can change — prefer
@@ -15,7 +16,7 @@ holds the secret key. Trust decisions happen on the server (see `fingerprint-nod
 > (index: https://docs.fingerprint.com/llms.txt) before relying on the specifics below.
 
 ## Package
-`@fingerprint/angular` (v4)
+`@fingerprint/angular` — install the latest version.
 
 ## Env var
 - `FINGERPRINT_PUBLIC_API_KEY` — the public key (safe to ship to the browser).

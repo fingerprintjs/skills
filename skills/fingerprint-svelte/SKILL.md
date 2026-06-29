@@ -1,13 +1,14 @@
 ---
 name: fingerprint-svelte
-description: Add Fingerprint visitor identification to a Svelte / SvelteKit frontend (v4 SDK) and send the event_id to the backend for verification.
+description: Add Fingerprint visitor identification to a Svelte / SvelteKit frontend. The browser produces a visitorId and a single-use event_id; verifying that event_id server-side is a separate step (see fingerprint-node).
 ---
 
 # Fingerprint — Svelte frontend identification (v4)
 
-Identify visitors in a Svelte / SvelteKit app and pass the identification to the backend so the
-server can verify it. The frontend **only identifies**; it never makes trust decisions and never
-holds the secret key. Trust decisions happen on the server (see `fingerprint-node`).
+This skill is **identification only**. It identifies visitors in a Svelte / SvelteKit app and
+produces a single-use `event_id`. The frontend never makes trust decisions and never holds the
+secret key — it just hands the `event_id` to your backend. Verifying that `event_id` and making
+trust decisions happen on the server, which is a separate skill (see `fingerprint-node`).
 
 > **Verify against the docs first.** The package name, provider `options`, and `getData` result
 > shape reflect Fingerprint v4 at time of writing and can change — prefer the live docs over
@@ -15,7 +16,7 @@ holds the secret key. Trust decisions happen on the server (see `fingerprint-nod
 > https://docs.fingerprint.com/llms.txt) before relying on the specifics below.
 
 ## Package
-`@fingerprint/svelte` (v4)
+`@fingerprint/svelte` — install the latest version.
 
 ## Env var
 - `FINGERPRINT_PUBLIC_API_KEY` — the public key (safe to ship to the browser).

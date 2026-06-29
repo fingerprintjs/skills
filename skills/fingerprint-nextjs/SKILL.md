@@ -17,8 +17,8 @@ which re-fetches the event from the Server API and applies the checks below.
 > Fingerprint MCP event-schema resource. Index: https://docs.fingerprint.com/llms.txt.
 
 ## Packages
-- `@fingerprint/react` (v4) — browser identification (client components).
-- `@fingerprint/node-sdk` (v4) — Server API verification (Route Handlers / Server Actions).
+- `@fingerprint/react` — browser identification (client components). Install the latest version.
+- `@fingerprint/node-sdk` — Server API verification (Route Handlers / Server Actions). Install the latest version.
 
 ## Env vars
 Next.js only exposes env vars prefixed with `NEXT_PUBLIC_` to the browser bundle. Everything else
