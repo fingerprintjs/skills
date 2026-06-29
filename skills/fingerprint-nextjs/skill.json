@@ -1,6 +1,6 @@
 {
   "id": "fingerprint-nextjs",
-  "title": "Fingerprint — Next.js identification + verification (v4)",
+  "title": "Fingerprint — Next.js",
   "role": "fullstack",
   "frameworks": ["next"],
   "packages": ["@fingerprint/react", "@fingerprint/node-sdk"],

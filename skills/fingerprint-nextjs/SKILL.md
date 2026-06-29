@@ -3,18 +3,15 @@ name: fingerprint-nextjs
 description: Add Fingerprint to a fullstack Next.js (App Router) app — identify visitors in the browser with the React SDK and verify the event_id server-side with the node SDK in a Route Handler or Server Action.
 ---
 
-# Fingerprint — Next.js identification + verification (v4)
+# Fingerprint — Next.js
 
-A Next.js app does both halves of the integration in one codebase: the **client identifies**
-the visitor and the **server verifies** the result. The browser never makes trust decisions and
-never holds the secret key — it only produces an `event_id`. Trust decisions happen on the server,
-which re-fetches the event from the Server API and applies the checks below.
+Integrate Fingerprint into a Next.js (App Router) app. Next.js does both halves in one codebase:
+the **client identifies** the visitor (producing a single-use `event_id`) and the **server**
+fetches that event from the Server API to read the verified identification and Smart Signals. The
+browser never holds the secret key and never makes trust decisions — the server does, using the
+checks below.
 
-> **Verify against the docs first.** Package names, the client SDK API, and the v4 event field
-> names below can change — prefer the live docs over pre-trained knowledge. Confirm the React SDK
-> at https://docs.fingerprint.com/docs/react and the event shape against the Node Server SDK types
-> / OpenAPI schema (https://github.com/fingerprintjs/fingerprint-pro-server-api-openapi) or the
-> Fingerprint MCP event-schema resource. Index: https://docs.fingerprint.com/llms.txt.
+> Docs: React SDK https://docs.fingerprint.com/docs/react · Node Server SDK https://docs.fingerprint.com/reference/node-server-sdk · event schema: OpenAPI (https://github.com/fingerprintjs/fingerprint-pro-server-api-openapi) or the Fingerprint MCP event-schema resource.
 
 ## Packages
 - `@fingerprint/react` — browser identification (client components). Install the latest version.
@@ -84,13 +81,6 @@ stays server-only.
 - `event.suspect_score` — weighted Smart-Signals score (integer)
 - `event.velocity` (object), `event.ip_blocklist` (object: `attack_source`, `email_spam`,
   `tor_node`) — for abuse / ATO logic
-
-## Fraud use-cases (on top of the baseline)
-- **Account takeover / credential stuffing:** flag logins from a `visitor_id` never seen for the
-  account; step-up auth or block on bot/VPN signals; inspect `event.velocity`.
-- **Signup / promo abuse:** rate-limit or block repeat `visitor_id`s creating many accounts.
-- **Payment fraud:** require clean signals + a known device before high-value actions.
-- **Scraping / bots:** block `event.bot === "bad"` on protected endpoints (incl. Route Handlers).
 
 ## Best practices
 - One `FingerprintProvider` at the app root; don't re-instantiate per component.

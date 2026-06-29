@@ -10,13 +10,8 @@ own context (user/account/order IDs, a plan name, a flow name) to an identificat
 can join Fingerprint's `visitor_id` and signals with your business data — in the Server API, in
 webhooks, and in dashboard search.
 
-> **Verify against the docs first.** How `tag` / `linkedId` are passed (the `getData` argument
-> shape) and how they appear on the server event (`event.tags` / `event.linked_id`) reflect v4 at
-> time of writing and can change — confirm against the SDK docs and the event schema before relying
-> on the specifics. Index: https://docs.fingerprint.com/llms.txt.
->
-> Note the client→server name change: you send **`tag`** in the client `getData(...)` call, but it
-> comes back on the server event as **`event.tags`** (plural). `linkedId` → `event.linked_id`.
+> **Note the client→server name change:** you send **`tag`** in the client `getData(...)` call, but
+> it comes back on the server event as **`event.tags`** (plural). `linkedId` → `event.linked_id`.
 
 ## Two tools
 - **`tag`** — arbitrary JSON metadata stored on the event (e.g. `{ userId, orderId, action }`).
