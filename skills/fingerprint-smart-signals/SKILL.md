@@ -5,15 +5,14 @@ description: Use the full set of Fingerprint Smart Signals (bot, VPN, proxy, tam
 
 # Fingerprint — Smart Signals (v4 Server API)
 
-Maps to the dashboard **"Access detailed insights about a visitor"** Get Started step. Once a
-basic verification is in place (see `fingerprint-node` / `fingerprint-python`), the same
-`getEvent(eventId)` response carries 100+ signals. This skill is about *acting on the full set*,
-not just `confidence`. All of these are server-verified — never trust client-reported equivalents.
+Maps to the dashboard **"Access detailed insights about a visitor"** Get Started step. Once your
+backend fetches an event server-side, the same `getEvent(eventId)` response carries 100+ signals.
+This skill is about *acting on the full set*, not just `confidence`. All of these are
+server-verified — never trust client-reported equivalents.
 
 ## Prerequisite
-A working server-side verification flow that already calls `getEvent(eventId)` and a
-`FINGERPRINT_SECRET_API_KEY`. If that isn't in place yet, do `fingerprint-node` /
-`fingerprint-python` first.
+A working server-side flow (in whatever backend you run) that already calls `getEvent(eventId)`
+with your `FINGERPRINT_SECRET_API_KEY`.
 
 ## Signals (flat v4 event shape)
 Each Smart Signal is a top-level field on the event. The web-relevant set:
@@ -33,13 +32,10 @@ Each Smart Signal is a top-level field on the event. The web-relevant set:
 | `virtual_machine` | running in a VM | Score |
 | `raw_device_attributes` | low-level device attributes | Custom heuristics |
 
-> **Verify field names against the docs first.** The exact field names and nesting below reflect
-> v4 at time of writing and can change — don't trust pre-trained knowledge. Field availability also
-> depends on your plan and platform (web vs. mobile). Treat the **event schema as authoritative**:
-> the Server SDK types, the OpenAPI schema
-> (https://github.com/fingerprintjs/fingerprint-pro-server-api-openapi), or the Fingerprint MCP
-> event-schema resource (index: https://docs.fingerprint.com/llms.txt). Guard each access
-> (`event.vpn ?? false`) so a missing signal doesn't throw.
+> Field availability depends on your plan and platform (web vs. mobile), so guard each access
+> (`event.vpn ?? false`) so a missing signal doesn't throw. Event schema: OpenAPI
+> (https://github.com/fingerprintjs/fingerprint-pro-server-api-openapi) or the Fingerprint MCP
+> event-schema resource.
 
 ## How to apply
 1. **Don't gate on a single signal.** Combine them into a per-action policy: e.g. block on

@@ -1,28 +1,25 @@
 ---
 name: fingerprint-vue
-description: Add Fingerprint visitor identification to a Vue 3 frontend (v4 SDK) and send the event_id to the backend for verification.
+description: Integrate Fingerprint device identification into a Vue 3 (or Nuxt) app — initialize the agent and get the visitor's visitor_id and event_id.
 ---
 
-# Fingerprint — Vue frontend identification (v4)
+# Fingerprint — Vue
 
-Identify visitors in a Vue 3 app and pass the identification to the backend so the server
-can verify it. The frontend **only identifies**; it never makes trust decisions and never
-holds the secret key. Trust decisions happen on the server (see `fingerprint-node`).
+Integrate Fingerprint into a Vue 3 app to identify visitors: register the plugin once at startup,
+then ask it for the visitor's `visitor_id` and a single-use `event_id` wherever you need it (on
+mount, or on an action like login or checkout).
 
-> **Verify against the docs first.** The package name, plugin/composable API, and `getData` result
-> shape reflect Fingerprint v4 at time of writing and can change — prefer the live docs over
-> pre-trained knowledge. Confirm at https://docs.fingerprint.com/docs/vuejs (index:
-> https://docs.fingerprint.com/llms.txt) before relying on the specifics below.
+> Docs: https://docs.fingerprint.com/docs/vuejs · JS Agent v4: https://docs.fingerprint.com/reference/js-agent-v4
 
 ## Package
-`@fingerprint/vue` (v4)
+`@fingerprint/vue` — install the latest version. (Nuxt uses the same package, registered
+client-side. For plain HTML or an unsupported framework, use `@fingerprint/agent` instead.)
 
 ## Env var
-- `FINGERPRINT_PUBLIC_API_KEY` — the public key (safe to ship to the browser).
+- `FINGERPRINT_PUBLIC_API_KEY` — the public key, safe to ship to the browser.
 
-> Bundlers only expose prefixed env vars to client code. Map the key to the bundler's
-> convention and read the prefixed name in code:
-> - Vite: `VITE_FINGERPRINT_PUBLIC_API_KEY` → `import.meta.env.VITE_FINGERPRINT_PUBLIC_API_KEY`
+> Bundlers only expose prefixed vars to client code — map the key to the bundler's convention:
+> - Vite: `VITE_FINGERPRINT_PUBLIC_API_KEY` → `import.meta.env.VITE_...`
 > - Vue CLI: `VUE_APP_FINGERPRINT_PUBLIC_API_KEY` → `process.env.VUE_APP_...`
 > Never expose `FINGERPRINT_SECRET_API_KEY` to the frontend.
 
@@ -30,19 +27,21 @@ holds the secret key. Trust decisions happen on the server (see `fingerprint-nod
 
 1. **Install** `@fingerprint/vue`.
 
-2. **Register `FingerprintPlugin`** at the app root with `app.use(...)`, passing the public key
-   and region (`us` | `eu` | `ap`, matching the workspace). See `snippets/plugin.js`.
+2. **Initialize once at the app root.** Register `FingerprintPlugin` with `app.use(...)`, passing
+   the public key and region (`us` | `eu` | `ap`, matching the workspace). See `snippets/plugin.js`.
 
-3. **Identify on sensitive actions, not on mount.** Use `useVisitorData` with
-   `{ immediate: false }` and call `getData()` at the moment of a security-relevant action
-   (login, signup, checkout, password reset). See `snippets/use-visitor-data.vue`.
+3. **Get the identification where you need it.** Use the `useVisitorData` composable. For
+   identify-on-demand pass `{ immediate: false }` and call `getData()` on the action you care
+   about; it returns `{ visitor_id, event_id, ... }`. See `snippets/use-visitor-data.vue`.
 
-4. **Send the `event_id` to the backend** with the action request. `getData()` returns
-   `{ visitor_id, event_id }`; send the **`event_id`** (single-use, server-verifiable). Do not
-   trust the `visitor_id` returned on the client — the backend re-derives it from the Server API.
+4. **Verify it works.** Disable your ad blocker, run the dev server, trigger the call, and confirm
+   a `visitor_id` is logged in the browser console (or that the event appears on the dashboard
+   Events page).
 
-## Best practices
-- Region must match the workspace region (`us` | `eu` | `ap`).
-- Don't block the UI on identification; handle the `isLoading`/`error` state from the composable.
-- Treat the client result as a hint only — the server is the source of truth.
-- Register `FingerprintPlugin` once at the app root; don't re-instantiate per component.
+## Notes
+- Region must match the workspace (`us` | `eu` | `ap`).
+- Register the plugin once at the app root; don't re-instantiate per component. Don't block the UI
+  on identification — handle the composable's `isLoading` / `error` state.
+- **Production:** protect the agent from ad blockers with a custom subdomain or proxy —
+  https://docs.fingerprint.com/docs/protecting-the-javascript-agent-from-adblockers.
+- Don't use legacy `@fingerprintjs/fingerprintjs-pro`, `FingerprintJS.load()`, or `scriptUrlPattern`.

@@ -10,10 +10,9 @@ loads its script and sends requests to Fingerprint's domain, which some browsers
 block — dropping identification accuracy. Routing the agent through **your own domain** makes the
 traffic first-party so it isn't blocked.
 
-> **Verify against the docs first — this API changed in v4.** In v4 the old `scriptUrlPattern`,
-> `endpoint` (singular), `tlsEndpoint`, and `disableTls` options were **removed** and consolidated
-> into a single **`endpoints`** option. Confirm the current shape before coding:
-> https://docs.fingerprint.com/docs/custom-subdomain-setup and
+> **This API changed in v4.** The old `scriptUrlPattern`, `endpoint` (singular), `tlsEndpoint`, and
+> `disableTls` options were **removed** and consolidated into a single **`endpoints`** option.
+> Docs: https://docs.fingerprint.com/docs/custom-subdomain-setup ·
 > https://docs.fingerprint.com/reference/migrating-from-v3-to-v4.
 
 There are two approaches, both configured in the dashboard and then pointed at from code:

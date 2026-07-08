@@ -1,6 +1,6 @@
 {
   "id": "fingerprint-vue",
-  "title": "Fingerprint — Vue frontend identification (v4)",
+  "title": "Fingerprint — Vue",
   "role": "frontend",
   "frameworks": ["vue"],
   "packages": ["@fingerprint/vue"],

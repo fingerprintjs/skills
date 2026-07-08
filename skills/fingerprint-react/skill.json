@@ -1,6 +1,6 @@
 {
   "id": "fingerprint-react",
-  "title": "Fingerprint — React frontend identification (v4)",
+  "title": "Fingerprint — React",
   "role": "frontend",
   "frameworks": ["react"],
   "packages": ["@fingerprint/react"],

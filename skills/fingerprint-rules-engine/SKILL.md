@@ -18,8 +18,7 @@ replace) server-side verification for your most sensitive actions.
   high-risk flows.
 - Most teams use both: a ruleset for the baseline, code for the nuanced cases.
 
-> **Rules Engine is in beta and requires Server API v4.** Confirm the current behavior against the
-> docs before coding: https://docs.fingerprint.com/docs/rules-engine.
+> **Rules Engine is in beta and requires Server API v4.** Docs: https://docs.fingerprint.com/docs/rules-engine.
 
 ## Set up your first rule (dashboard)
 This step is configured in the dashboard, not in code:
@@ -60,8 +59,7 @@ Read it and honor it:
 - Keep your own fail-closed checks for sensitive actions — a permissive ruleset should never
   downgrade your code-level protection.
 
-> Guard the access — `rule_action` is only present when you passed a valid `ruleset_id`. If field
-> names look different on your plan, read the **event schema resource** before coding against them.
+> Guard the access — `rule_action` is only present when you passed a valid `ruleset_id`.
 
 ## Verify the rule is actually working
 1. Trigger a request that should match (e.g. from a flagged bot/IP, or temporarily loosen the
