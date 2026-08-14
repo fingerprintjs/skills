@@ -30,7 +30,13 @@ decision coming straight from the client.
 2. **Create one client** at startup with the secret key and region (`Region.Global` | `Region.EU`
    | `Region.AP`, matching the workspace). Load `.env` (via `dotenv`) at the top of the module
    that constructs the client, so `FINGERPRINT_SECRET_API_KEY` is set before it's read — plain
-   Node does not auto-load `.env`. See `snippets/client.js`.
+   Node does not auto-load `.env`, and a missing key fails at startup with "Api key is not set".
+   Pick the snippet by module system — check `package.json` `"type"`, not the file extension, since
+   a TypeScript project can be either:
+   - `"type": "module"` (ESM) → `snippets/client.mjs`. `import 'dotenv/config'` must be the **first
+     import**: ESM evaluates all imports, in order, before any statement in the file, so a
+     `dotenv.config()` call in the body runs too late.
+   - otherwise (CommonJS) → `snippets/client.js`.
 
 3. **Add a verification helper** that runs before sensitive handlers: given the `event_id`,
    call `client.getEvent(eventId)` and apply the checks below. See `snippets/verify.js`.
