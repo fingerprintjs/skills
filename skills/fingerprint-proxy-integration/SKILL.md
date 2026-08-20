@@ -46,9 +46,8 @@ its script from** and the **`endpoints`** value, not your application logic.
 3. Set `endpoints` to your subdomain (and, for CDN installs, import the script from it). See
    `snippets/subdomain-options.js`.
 
-> DNS/cert validation can take up to 24 hours. Pending subdomains persist indefinitely and do not
-> expire while their records are unset. This DNS step is outside the SDK — if the user is blocked
-> on verification, it's a DNS-provider/propagation issue, not a code problem; they can set
+> DNS/cert validation can take up to 24 hours. This DNS step is outside the SDK — if the user is
+> blocked on verification, it's a DNS-provider/propagation issue, not a code problem; they can set
 > `endpoints` once it verifies.
 
 ## Proxy integration (max accuracy)
