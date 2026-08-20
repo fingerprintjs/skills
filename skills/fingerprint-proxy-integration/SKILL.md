@@ -19,7 +19,7 @@ There are two approaches, both configured in the dashboard and then pointed at f
 
 | Approach | Effort | Accuracy | When |
 | --- | --- | --- | --- |
-| **Custom subdomain** | Low — one DNS CNAME | Good | Simplest setup; quick win |
+| **Custom subdomain** | Low — one DNS CNAME and two A records | Good | Simplest setup; quick win |
 | **Proxy integration** | Higher — deploy a proxy | Best | Maximum accuracy; you control the edge |
 
 You can start with a subdomain and move to a proxy later — both change only **where the agent loads
@@ -35,16 +35,20 @@ its script from** and the **`endpoints`** value, not your application logic.
 
 ## Custom subdomain
 1. In the dashboard, go to **Settings → Subdomains → Add subdomain** and register a **custom
-   subdomain** (e.g. `metrics.yourdomain.com`) — it must be on the same site as your app.
+   subdomain** (e.g. `metrics.yourdomain.com`) — it must be on the same site as your app. Before
+   creating it, confirm the exact FQDN with the user: subdomains are immutable, so changing one
+   requires deleting and recreating it. Avoid FQDNs containing `fingerprint` or `fingerprintjs` as
+   a substring; the API rejects them with a 400 response. Workspaces are limited to 50 subdomains
+   (5 on free trial plans).
 2. Add the **CNAME** record it gives you at your DNS provider to verify domain ownership and let
    the SSL certificate be issued. Once the certificate shows **Issued**, add the two **A records**
    the dashboard provides to finish the connection. (You can sanity-check with `dig <host> +short`.)
 3. Set `endpoints` to your subdomain (and, for CDN installs, import the script from it). See
    `snippets/subdomain-options.js`.
 
-> DNS/cert validation can take up to 24 hours, and the subdomain expires if records aren't set
-> within 14 days. This DNS step is outside the SDK — if the user is blocked on verification, it's a
-> DNS-provider/propagation issue, not a code problem; they can set `endpoints` once it verifies.
+> DNS/cert validation can take up to 24 hours. This DNS step is outside the SDK — if the user is
+> blocked on verification, it's a DNS-provider/propagation issue, not a code problem; they can set
+> `endpoints` once it verifies.
 
 ## Proxy integration (max accuracy)
 1. Deploy one of Fingerprint's proxy integrations at your edge — **Cloudflare Worker**, **AWS
