@@ -30,6 +30,13 @@ holds the secret key. Trust decisions happen on the server (see `fingerprint-nod
 
 1. **Install** `@fingerprint/react`.
 
+   **pnpm:** the package includes a `postinstall` script for environment detection. If pnpm reports
+   `ERR_PNPM_IGNORED_BUILDS`, keep its build-script protection enabled: run
+   `pnpm approve-builds`, approve `@fingerprint/react`, then run `pnpm install` again. pnpm 11 also
+   accepts `pnpm approve-builds @fingerprint/react`. Verify the current package scripts and pnpm
+   approval flow before relying on these commands:
+   https://www.npmjs.com/package/@fingerprint/react and https://pnpm.io/cli/approve-builds.
+
 2. **Wrap the app in `FingerprintProvider`** at the root, passing the public key and region
    (`us` | `eu` | `ap`, matching the workspace). See `snippets/provider.jsx`.
 

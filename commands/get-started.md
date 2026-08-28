@@ -32,8 +32,8 @@ The user invoked this with: `$ARGUMENTS` — treat as the project path if given,
 ### Quick start
 1. **Install Fingerprint** — identify visitors and capture the first event.
    → Run `/integrate`, or invoke the matching frontend skill (`fingerprint-react` / `-vue` /
-   `-angular` / `-svelte` / `-nextjs`). *Done when the client calls `getData()` and an event is
-   received.*
+   `-angular` / `-svelte` / `-nextjs`, or `fingerprint-javascript` when there's no framework SDK).
+   *Done when the client identifies the visitor and an event is received.*
 2. **Access detailed insights about a visitor** — use the Server API and Smart Signals.
    → Invoke `fingerprint-node` / `fingerprint-python` for the verification flow, then
    `fingerprint-smart-signals` to act on the full signal set. *Done when the server calls

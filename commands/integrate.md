@@ -31,6 +31,7 @@ Map detected frameworks to skills:
 | `vue`, `nuxt` | `fingerprint-vue` | frontend |
 | `@angular/core` | `fingerprint-angular` | frontend |
 | `svelte` (incl. SvelteKit) | `fingerprint-svelte` | frontend |
+| browser code with no framework SDK (plain JS/HTML, Vite/Webpack vanilla template, Solid, Lit, Alpine, htmx, jQuery) | `fingerprint-javascript` | frontend |
 | `express`, `fastify`, `koa`, `@nestjs/core`, `@hapi/hapi` | `fingerprint-node` | backend |
 | `fastapi`, `django`, `flask` | `fingerprint-python` | backend |
 
@@ -38,6 +39,8 @@ Rules:
 - If you detect **Next.js**, use `fingerprint-nextjs` alone — it does client + server.
 - Otherwise pick **one frontend** and **one backend** skill that match. If only a frontend is
   present, apply it but clearly flag that verification must be added server-side to be secure.
+- A frontend with no framework SDK still gets a curated skill — use `fingerprint-javascript`
+  rather than the docs fallback.
 - If nothing matches a curated skill, fall back to the official docs (start at
   `https://docs.fingerprint.com/llms.txt`) and integrate from there.
 
