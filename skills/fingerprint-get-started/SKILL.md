@@ -43,11 +43,14 @@ Map detected frameworks to skills:
 | `vue`, `nuxt` | `fingerprint-vue` | frontend |
 | `@angular/core` | `fingerprint-angular` | frontend |
 | `svelte` (incl. SvelteKit) | `fingerprint-svelte` | frontend |
+| browser code with no framework SDK (plain JS/HTML, Vite/Webpack vanilla template, Solid, Lit, Alpine, htmx, jQuery) | `fingerprint-javascript` | frontend |
 | `express`, `fastify`, `koa`, `@nestjs/core`, `@hapi/hapi` | `fingerprint-node` | backend |
 | `fastapi`, `django`, `flask` | `fingerprint-python` | backend |
 
 - If you detect **Next.js**, `fingerprint-nextjs` covers both the install and server steps.
 - Otherwise pick **one frontend** skill for step 1 and **one backend** skill for step 2.
+- A frontend with no framework SDK still has a curated skill — use `fingerprint-javascript` rather
+  than the docs fallback.
 - If nothing matches a curated skill, fall back to the docs (start at
   `https://docs.fingerprint.com/llms.txt`).
 
@@ -57,7 +60,8 @@ Map detected frameworks to skills:
 1. **Install Fingerprint (frontend)** — add visitor identification to the client and capture the
    first event.
    → Apply the matching frontend skill: `fingerprint-react` / `fingerprint-vue` /
-   `fingerprint-angular` / `fingerprint-svelte`, or `fingerprint-nextjs` (which also covers step 2).
+   `fingerprint-angular` / `fingerprint-svelte` / `fingerprint-javascript` (no framework SDK), or
+   `fingerprint-nextjs` (which also covers step 2).
    *Done when the client calls `getData()` and an event is received.*
 2. **Access detailed insights (backend / Server API)** — verify the event server-side and read
    Smart Signals.

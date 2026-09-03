@@ -13,7 +13,7 @@ load, or on an action like login or checkout).
 
 ## Package
 `@fingerprint/react` — install the latest version. (Preact uses the same package. For plain HTML
-or an unsupported framework, use `@fingerprint/agent` instead.)
+or an unsupported framework, use `fingerprint-javascript` and `@fingerprint/agent` instead.)
 
 ## Env var
 - `FINGERPRINT_PUBLIC_API_KEY` — the public key, safe to ship to the browser.
@@ -25,7 +25,9 @@ or an unsupported framework, use `@fingerprint/agent` instead.)
 
 ## Steps
 
-1. **Install** `@fingerprint/react`.
+1. **Install** `@fingerprint/react`. On pnpm, the package's `postinstall` may be blocked with
+   `ERR_PNPM_IGNORED_BUILDS` — run `pnpm approve-builds`, approve `@fingerprint/react`, then
+   install again. Keep pnpm's build-script protection on.
 
 2. **Initialize once at the app root.** Wrap the app in `FingerprintProvider`, passing the public
    key and region (`us` | `eu` | `ap`, matching the workspace). Client-side only. See

@@ -34,6 +34,7 @@ STOP. Your knowledge of Fingerprint SDK options, package names, and event field 
 ## Packages — v4 (confirm the current version against the docs; don't pin)
 
 - React `@fingerprint/react` · Vue `@fingerprint/vue` · Angular `@fingerprint/angular` · Svelte `@fingerprint/svelte`
+- Vanilla JS / any other frontend `@fingerprint/agent` (the JS Agent loader the framework SDKs wrap)
 - Node server `@fingerprint/node-sdk` · Python server `fingerprint-server-sdk` (PyPI)
 
 > Legacy v3 packages (do **not** use for new integrations): `@fingerprintjs/fingerprintjs-pro-react`, `@fingerprintjs/fingerprintjs-pro-server-api`.
