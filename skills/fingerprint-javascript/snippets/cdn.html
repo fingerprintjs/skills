@@ -7,13 +7,8 @@
     region: 'us', // must match your workspace region
   })
 
-  document.getElementById('create-account-btn').addEventListener('click', async () => {
-    const { event_id } = await fp.get()
-
-    await fetch('/api/create-account', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ event_id }),
-    })
-  })
+  // Identify the visitor. Each get() call is a billable identification event.
+  const { visitor_id, event_id } = await fp.get()
+  console.log('visitor_id:', visitor_id)
+  console.log('event_id:', event_id)
 </script>

@@ -47,7 +47,7 @@ instead — see `snippets/cdn.html`.
 3. **Get the identification where you need it.** Call `fp.get()`, which resolves to
    `{ visitor_id, event_id, ... }`. Each call is a billable identification event, so call it on the
    action you care about rather than on every page view. It accepts `{ tag, linkedId, timeout }`.
-   See `snippets/create-account.js`.
+   See `snippets/identify.js`.
 
 4. **Verify it works.** Disable your ad blocker, run the dev server, trigger the call, and confirm
    a `visitor_id` is logged in the browser console (or that the event appears on the dashboard
