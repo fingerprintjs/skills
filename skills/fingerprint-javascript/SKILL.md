@@ -22,6 +22,11 @@ the current agent from the CDN at runtime rather than bundling the fingerprintin
 vendor or self-host the agent bundle. With no build step, skip the install and import from the CDN
 instead — see `snippets/cdn.html`.
 
+> Fingerprint's CDN serves the agent at `/v4/<PUBLIC_API_KEY>`. A custom subdomain or proxy serves
+> it one level down, at `/web/v4/<PUBLIC_API_KEY>` — `/web/` is the path prefix the proxy uses to
+> separate agent downloads from identification requests on your own host, so the two URLs are
+> meant to differ. See `fingerprint-proxy-integration`.
+
 ## Env var
 - `FINGERPRINT_PUBLIC_API_KEY` — the public key, safe to ship to the browser.
 
@@ -34,7 +39,8 @@ instead — see `snippets/cdn.html`.
 
 ## Steps
 
-1. **Install** `@fingerprint/agent`.
+1. **Install** `@fingerprint/agent` — or, with no build step, skip the install and import from the
+   CDN (`snippets/cdn.html`) instead of adding a `package.json` the project doesn't have.
 
 2. **Initialize once at app startup.** Call `Fingerprint.start()` with the public key and region
    (`us` | `eu` | `ap`, matching the workspace), and export the instance so the rest of the app

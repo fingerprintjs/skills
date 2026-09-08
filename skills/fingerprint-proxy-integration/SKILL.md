@@ -29,7 +29,11 @@ its script from** and the **`endpoints`** value, not your application logic.
 - `endpoints` sets where the agent **sends identification requests**. It takes a single string
   (your subdomain/proxy origin); an array can be supplied when fallbacks are required.
 - The **script download URL** is set separately:
-  - **CDN**: it's the import URL — `https://metrics.yourdomain.com/web/v4/<PUBLIC_API_KEY>`.
+  - **CDN**: it's the import URL — `https://metrics.yourdomain.com/web/v4/<PUBLIC_API_KEY>`. Note
+    the `/web/` segment: on your own host the agent download sits under that prefix, while
+    Fingerprint's CDN serves it at `https://fpjscdn.net/v4/<PUBLIC_API_KEY>` with no prefix. So
+    routing an existing CDN import through a subdomain means adding `/web/`, not just swapping the
+    host. (Passing `endpoints` to the npm/SDK path appends `/web/` for you.)
   - **NPM / framework SDKs**: pass `endpoints` to the provider/start options (e.g. the
     `FingerprintProvider` `endpoints` prop). See `snippets/subdomain-options.js`.
 
