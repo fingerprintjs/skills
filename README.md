@@ -11,9 +11,9 @@ server-side verification that makes it actually secure.
 
 ## Why use it
 
-- **It picks the right integration for your stack.** React, Vue, Angular, Svelte, Next.js, Node,
-  or Python — the assistant detects what you're using and applies the matching guide. No wrong
-  snippets, no guesswork.
+- **It picks the right integration for your stack.** React, Vue, Angular, Svelte, Next.js, vanilla
+  JavaScript, Node, or Python — the assistant detects what you're using and applies the matching
+  guide. No wrong snippets, no guesswork.
 - **Secure by default.** Identification in the browser is only half the job. These skills always
   pair it with **server-side verification** and keep your secret key off the client — the part
   most hand-rolled integrations get wrong.
@@ -81,6 +81,7 @@ Clone this repo and copy the skill folders into the appropriate directory for yo
 | Your stack | What gets set up |
 | --- | --- |
 | React · Vue / Nuxt · Angular · Svelte / SvelteKit | Visitor identification in the browser |
+| Vanilla JavaScript (Vite, Webpack, plain `<script>`) | Visitor identification with the JS Agent directly — for stacks with no framework SDK |
 | Node (Express, Fastify, Koa, Nest, Hapi) · Python (FastAPI, Django, Flask) | Server-side verification + fraud checks |
 | Next.js | Both halves in one app (client identify + server verify) |
 
