@@ -40,12 +40,9 @@ Each Smart Signal is a top-level field on the event. The web-relevant set:
 > event-schema resource.
 
 ## Bot detection
-> Docs: AI agents (https://docs.fingerprint.com/docs/ai-agents) is the fullest treatment of
-> `bot_info`; also AI assistants (https://docs.fingerprint.com/docs/ai-assistants), Bot Detection
-> overview (https://docs.fingerprint.com/docs/bot-detection/overview), the Bot Directory
-> (https://docs.fingerprint.com/docs/bot-detection/bot-directory) for who is recognized, and Web Bot
-> Auth (https://docs.fingerprint.com/docs/bot-detection/web-bot-auth-implementation). `confidence`
-> and `bot_type` appear only in the OpenAPI schema, not in the prose docs.
+> Docs: https://docs.fingerprint.com/docs/ai-agents (the fullest treatment of `bot_info`) ·
+> https://docs.fingerprint.com/docs/bot-detection/bot-directory (which bots are recognized).
+> `confidence` and `bot_type` are in the OpenAPI schema only, not the prose docs.
 >
 > Bot Detection needs **Pro Plus or Enterprise**, and the AI-tool fields need **Server API v4+**.
 
