@@ -1,22 +1,25 @@
-<!-- Identify at the moment of a sensitive action and send event_id to the backend. -->
+<!-- Identify at the moment of a sensitive action, rather than on mount. -->
 <script setup>
 import { useVisitorData } from '@fingerprint/vue'
 
 // immediate: false → don't identify on mount; only when we call getData()
-const { getData } = useVisitorData({ immediate: false })
+const { getData, isLoading, error } = useVisitorData({ immediate: false })
 
 async function handleSubmit() {
-  const { event_id } = await getData()
+  // Each getData() call is a billable identification event, so call it on the action you care
+  // about. It returns { visitor_id, event_id, ... }.
+  const { visitor_id, event_id } = await getData()
+  console.log('visitor_id:', visitor_id, 'event_id:', event_id)
 
-  await fetch('/api/login', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ username, password, eventId: event_id }),
-  })
+  // Identification alone is a hint, not a trust decision: anything from the browser can be forged.
+  // If this app has a backend, that is where the single-use `event_id` goes — send it alongside the
+  // request and verify it there with the Server API (`fingerprint-node` / `fingerprint-python`),
+  // then act on the verified result. Never send `visitor_id` as proof.
 }
 </script>
 
 <template>
+  <!-- Don't block the UI on identification; surface `error` and disable submit while `isLoading`. -->
   <form @submit.prevent="handleSubmit">
     <!-- ...form... -->
   </form>
