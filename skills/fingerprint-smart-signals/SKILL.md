@@ -40,6 +40,15 @@ Each Smart Signal is a top-level field on the event. The web-relevant set:
 > event-schema resource.
 
 ## Bot detection
+> Docs: AI agents (https://docs.fingerprint.com/docs/ai-agents) is the fullest treatment of
+> `bot_info`; also AI assistants (https://docs.fingerprint.com/docs/ai-assistants), Bot Detection
+> overview (https://docs.fingerprint.com/docs/bot-detection/overview), the Bot Directory
+> (https://docs.fingerprint.com/docs/bot-detection/bot-directory) for who is recognized, and Web Bot
+> Auth (https://docs.fingerprint.com/docs/bot-detection/web-bot-auth-implementation). `confidence`
+> and `bot_type` appear only in the OpenAPI schema, not in the prose docs.
+>
+> Bot Detection needs **Pro Plus or Enterprise**, and the AI-tool fields need **Server API v4+**.
+
 `bot` is a verdict, not a description: three values can't separate Googlebot from ChatGPT's agent
 from Playwright, and every one of those needs a different answer. Read `bot_info` — present on every
 event where a bot was detected, absent otherwise.
@@ -62,17 +71,24 @@ event where a bot was detected, absent otherwise.
 ```
 
 **`identity` carries the most policy weight and has no equivalent in `bot`:**
-- `verified` — well-known bot with a publicly verifiable identity, confirmed. Googlebot really is Googlebot.
-- `signed` — signs its platform via Web Bot Auth, directed by the provider's customers.
-- `spoofed` — claims a public identity and **fails** verification. A stronger block signal than
-  `bot === "bad"`: nothing legitimate pretends to be Googlebot.
-- `unknown` — publishes no verifiable identity. Most headless automation lands here.
+- `verified` — signature verified *and* the bot is operated exclusively by its vendor. Googlebot
+  really is Googlebot. Allow.
+- `signed` — signature verified against the agent's public key directory (Web Bot Auth), but run by
+  the provider's customers rather than the provider. Allow.
+- `spoofed` — presented an identity that **failed** verification. Not automatically malicious: a
+  misconfigured Web Bot Auth setup lands here too, so investigate before making it a permanent
+  block — but never treat it as trusted.
+- `unknown` — recognized as a bot, but presented no verifiable identity. Most headless automation
+  lands here; apply your own logic.
 
 ### Deciding
 - **Never blanket-block `bot !== "not_detected"` on a crawlable route.** That set includes `good`,
   and blocking a `verified` `search_engine_crawler` is an SEO outage. Failing closed on *any* bot is
   right for login/checkout/password-reset, where no crawler belongs — scope it to those.
-- **Block `identity === "spoofed"` everywhere.**
+- **Never trust `identity === "spoofed"`,** but check whose bot it is before blocking permanently —
+  a customer's broken Web Bot Auth signature produces the same result as an impersonator.
+- **`bot === "bad"` with no `bot_info`** means automation Fingerprint doesn't recognize — nothing to
+  allow-list against, so review or block.
 - **Choose the AI categories deliberately, per route.** `ai_crawler` / `ai_search` are a
   licensing-and-robots question; `ai_agent` / `ai_browser` / `ai_assistant` are automation acting for
   a real logged-in human, which you may well want to let browse and stop at checkout. Answering
