@@ -44,7 +44,14 @@ export async function verifyEvent(eventId?: string): Promise<VerifyResult> {
   if ((id.confidence?.score ?? 0) < MIN_CONFIDENCE) return { ok: false, reason: 'low_confidence' }
 
   // Smart signals (fail closed for high-risk actions)
-  if (event.bot && event.bot !== 'not_detected') return { ok: false, reason: 'bot' }
+  // Any bot is the right answer for a login or a checkout — no crawler belongs there. On a
+  // crawlable route it is not: that set includes verified search-engine crawlers. There, block
+  // event.bot_info.identity === 'spoofed' and decide the AI categories per route instead — see the
+  // fingerprint-smart-signals skill. bot_info also names the bot, which is what makes the rejection
+  // worth logging.
+  if (event.bot && event.bot !== 'not_detected') {
+    return { ok: false, reason: `bot:${event.bot_info?.category ?? event.bot}` }
+  }
   if (event.vpn || event.proxy) return { ok: false, reason: 'anonymizing_network' }
   if (event.tampering) return { ok: false, reason: 'tampering' }
 

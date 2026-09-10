@@ -1,6 +1,6 @@
 ---
 name: fingerprint-smart-signals
-description: Use the full set of Fingerprint Smart Signals (bot, VPN, proxy, tampering, incognito, IP blocklist, velocity, suspect score, location spoofing, and more) from the v4 Server API to make richer server-side trust decisions. Use after the basic identification + verification is in place, when you want detailed insights about a visitor beyond confidence.
+description: Use the full set of Fingerprint Smart Signals (bot detection with bot_info — name, provider, category, identity, confidence — plus VPN, proxy, tampering, incognito, IP blocklist, velocity, suspect score, location spoofing, and more) from the v4 Server API to make richer server-side trust decisions. Use after the basic identification + verification is in place, when you want detailed insights about a visitor beyond confidence.
 ---
 
 # Fingerprint — Smart Signals (v4 Server API)
@@ -19,7 +19,9 @@ Each Smart Signal is a top-level field on the event. The web-relevant set:
 
 | Field | Meaning | Typical action |
 | --- | --- | --- |
-| `bot` | `"bad" \| "good" \| "not_detected"` | Block `"bad"` on protected endpoints |
+| `bot` | `"bad" \| "good" \| "not_detected"` — the coarse verdict | See **Bot detection** below; don't act on this field alone |
+| `bot_info` | object — `name`, `provider`, `category`, `identity`, `confidence` | Who the bot is and whether its identity checks out |
+| `bot_type` | string — e.g. `"headless_chrome"`, `"chatgpt_agent"` | Finer classification of the automation |
 | `vpn` | behind a VPN | Step-up / score for high-risk flows |
 | `proxy` | behind a public proxy | Step-up / score |
 | `tampering` | bool — anomalous browser signature / anti-detect browser | Reject for sensitive actions |
@@ -37,10 +39,53 @@ Each Smart Signal is a top-level field on the event. The web-relevant set:
 > (https://github.com/fingerprintjs/fingerprint-pro-server-api-openapi) or the Fingerprint MCP
 > event-schema resource.
 
+## Bot detection
+`bot` is a verdict, not a description: three values can't separate Googlebot from ChatGPT's agent
+from Playwright, and every one of those needs a different answer. Read `bot_info` — present on every
+event where a bot was detected, absent otherwise.
+
+| `bot_info` field | Values | |
+| --- | --- | --- |
+| `name` | `"Googlebot"`, `"GPTBot"`, `"ClaudeBot"`, `"ChatGPT-User"`, `"Browserbase Agent"`, `"ChromeHeadless"` | the specific bot |
+| `provider` | `"Google"`, `"OpenAI"`, `"Anthropic"`, `"Browserbase"`, `"chromium/chromium"` | who operates it |
+| `category` | `search_engine_crawler`, `ai_crawler`, `ai_agent`, `ai_assistant`, `ai_browser`, `ai_search`, `browser_automation`, `scraping`, `monitoring_and_analytics`, `security`, `advertising_and_marketing`, `aggregator`, `ecommerce`, `search_engine_optimization`, `other`, `unknown` | what it's *for* — the axis most policies should key on |
+| `identity` | `verified` \| `signed` \| `spoofed` \| `unknown` | whether the claim holds up |
+| `confidence` | `low` \| `medium` \| `high` | how sure the classification is |
+
+`name`, `provider`, `category`, `identity` and `confidence` are all present when `bot_info` is;
+`provider_url` is optional. A real event:
+
+```json
+{ "bot": "bad", "bot_type": "headless_chrome",
+  "bot_info": { "name": "ChromeHeadless", "provider": "chromium/chromium",
+                "category": "browser_automation", "identity": "unknown", "confidence": "medium" } }
+```
+
+**`identity` carries the most policy weight and has no equivalent in `bot`:**
+- `verified` — well-known bot with a publicly verifiable identity, confirmed. Googlebot really is Googlebot.
+- `signed` — signs its platform via Web Bot Auth, directed by the provider's customers.
+- `spoofed` — claims a public identity and **fails** verification. A stronger block signal than
+  `bot === "bad"`: nothing legitimate pretends to be Googlebot.
+- `unknown` — publishes no verifiable identity. Most headless automation lands here.
+
+### Deciding
+- **Never blanket-block `bot !== "not_detected"` on a crawlable route.** That set includes `good`,
+  and blocking a `verified` `search_engine_crawler` is an SEO outage. Failing closed on *any* bot is
+  right for login/checkout/password-reset, where no crawler belongs — scope it to those.
+- **Block `identity === "spoofed"` everywhere.**
+- **Choose the AI categories deliberately, per route.** `ai_crawler` / `ai_search` are a
+  licensing-and-robots question; `ai_agent` / `ai_browser` / `ai_assistant` are automation acting for
+  a real logged-in human, which you may well want to let browse and stop at checkout. Answering
+  "is it a bot" doesn't answer either of these.
+- **Check `confidence` before anything irreversible.** A hard block on a `low`-confidence
+  classification is a false-positive machine.
+- `bot_info` accepts additional properties, so new fields ship without a version bump — read the
+  ones you use and don't assume the shape is closed.
+
 ## How to apply
 1. **Don't gate on a single signal.** Combine them into a per-action policy: e.g. block on
-   `bot === "bad"` or `tampering`, step-up auth on `vpn || proxy || ip_blocklist`, and log
-   `suspect_score` for analytics.
+   `bot_info.identity === "spoofed"`, `bot === "bad"` or `tampering`, step-up auth on
+   `vpn || proxy || ip_blocklist`, and log `suspect_score` for analytics.
 2. **Tune by action risk.** Login/checkout/password-reset warrant strict, fail-closed policies;
    read-only or low-risk actions can score-and-allow.
 3. **Use `velocity` for abuse/ATO.** A spike of identifications for one `visitor_id` (or many
