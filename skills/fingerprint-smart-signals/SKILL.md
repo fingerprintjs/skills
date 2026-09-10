@@ -79,8 +79,13 @@ event where a bot was detected, absent otherwise.
   "is it a bot" doesn't answer either of these.
 - **Check `confidence` before anything irreversible.** A hard block on a `low`-confidence
   classification is a false-positive machine.
-- `bot_info` accepts additional properties, so new fields ship without a version bump — read the
-  ones you use and don't assume the shape is closed.
+- The `bot_info` object itself is closed (`additionalProperties: false`), but the **`category`
+  enum is not stable** — the AI values (`ai_agent`, `ai_browser`, `ai_crawler`, `ai_search`,
+  `ai_assistant`) were added months after `bot_info` shipped. Treat an unrecognized category as
+  `unknown` rather than as "not a bot", or the next addition silently becomes an allow.
+- All five fields are also **Rules Engine conditions** (Bot Category, Bot Identity, Bot Confidence,
+  Bot Name, Bot Provider), so this policy can be expressed no-code instead — see
+  `fingerprint-rules-engine`.
 
 ## How to apply
 1. **Don't gate on a single signal.** Combine them into a per-action policy: e.g. block on
