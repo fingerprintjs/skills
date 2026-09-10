@@ -53,6 +53,10 @@ Each Smart Signal is a top-level field on the event. The web-relevant set:
 from Playwright, and every one of those needs a different answer. Read `bot_info` — present on every
 event where a bot was detected, absent otherwise.
 
+> If `bot_info` is missing for traffic you know is a crawler, check **Security → Bots** first: the
+> **Exclude AI Bots** / **Exclude Search Bots** toggles drop those requests before they're billed and
+> return `event_id` alone. See `fingerprint-request-filtering`.
+
 | `bot_info` field | Values | |
 | --- | --- | --- |
 | `name` | `"Googlebot"`, `"GPTBot"`, `"ClaudeBot"`, `"ChatGPT-User"`, `"Browserbase Agent"`, `"ChromeHeadless"` | the specific bot |
