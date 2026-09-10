@@ -24,7 +24,13 @@ from the client.
 
 2. **Create one client** at startup with the secret key and region (`Region.Global` | `Region.EU`
    | `Region.AP`, matching the workspace). Load `.env` (via `dotenv`) before the key is read —
-   plain Node does not auto-load `.env`. See `snippets/client.js`.
+   plain Node does not auto-load `.env`, and a missing key fails at startup with "Api key is not
+   set". Pick the snippet by module system — check `package.json` `"type"`, not the file
+   extension, since a TypeScript project can be either:
+   - `"type": "module"` (ESM) → `snippets/client.mjs`. `import 'dotenv/config'` must be the
+     **first import**: ESM evaluates all imports, in order, before any statement in the file, so a
+     `dotenv.config()` call in the body runs too late.
+   - otherwise (CommonJS) → `snippets/client.js`.
 
 3. **Fetch and check the event.** Given the `event_id`, call `client.getEvent(eventId)` and apply
    the checks below before trusting the action. See `snippets/verify.js`.

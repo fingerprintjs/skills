@@ -1,4 +1,8 @@
-// Load .env before reading any keys (order-independent: this runs when the module is required).
+// CommonJS version (package.json has no "type": "module"). For ESM, see client.mjs — there the
+// .env load must be the first import, and this ordering note does not apply.
+//
+// Load .env before reading any keys. `require` runs in place, so this line executes before the
+// keys are read below.
 require('dotenv').config()
 
 // Create one client at startup. Region MUST match your workspace or lookups fail — map it

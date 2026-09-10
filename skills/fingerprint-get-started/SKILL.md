@@ -31,6 +31,8 @@ skill with the Skill tool; in other agents, load and follow the named skill.
 Read the project's manifests (don't guess from directory names):
 - **Node**: `package.json` `dependencies` + `devDependencies`.
 - **Python**: `requirements.txt`, `pyproject.toml`.
+- **No manifest at all**: an `index.html` is a static site — still a supported frontend, with no
+  build step and no env vars (the public key goes in the agent's CDN import URL).
 - Check up to ~2 levels deep for monorepos (`apps/`, `packages/`, `pnpm-workspace.yaml`); a repo
   can have a separate frontend and backend.
 
@@ -43,11 +45,18 @@ Map detected frameworks to skills:
 | `vue`, `nuxt` | `fingerprint-vue` | frontend |
 | `@angular/core` | `fingerprint-angular` | frontend |
 | `svelte` (incl. SvelteKit) | `fingerprint-svelte` | frontend |
+| `solid-js`, `lit`, `alpinejs`, `htmx.org`, `jquery` | `fingerprint-javascript` | frontend |
 | `express`, `fastify`, `koa`, `@nestjs/core`, `@hapi/hapi` | `fingerprint-node` | backend |
 | `fastapi`, `django`, `flask` | `fingerprint-python` | backend |
+| *(no dependency matched above)* an `index.html` entry — plain HTML/JS, or a Vite/Webpack vanilla template | `fingerprint-javascript` | frontend |
 
 - If you detect **Next.js**, `fingerprint-nextjs` covers both the install and server steps.
 - Otherwise pick **one frontend** skill for step 1 and **one backend** skill for step 2.
+- Match on dependencies first. The last row is a fallback: only use it once you've confirmed none
+  of the packages above are present. When several match (jQuery inside a React app), the framework
+  SDK wins — it wraps the same agent with framework-native APIs.
+- A frontend with no framework SDK still has a curated skill — use `fingerprint-javascript` rather
+  than the docs fallback.
 - If nothing matches a curated skill, fall back to the docs (start at
   `https://docs.fingerprint.com/llms.txt`).
 
@@ -57,7 +66,8 @@ Map detected frameworks to skills:
 1. **Install Fingerprint (frontend)** — add visitor identification to the client and capture the
    first event.
    → Apply the matching frontend skill: `fingerprint-react` / `fingerprint-vue` /
-   `fingerprint-angular` / `fingerprint-svelte`, or `fingerprint-nextjs` (which also covers step 2).
+   `fingerprint-angular` / `fingerprint-svelte` / `fingerprint-javascript` (no framework SDK), or
+   `fingerprint-nextjs` (which also covers step 2).
    *Done when the client calls `getData()` and an event is received.*
 2. **Access detailed insights (backend / Server API)** — verify the event server-side and read
    Smart Signals.
