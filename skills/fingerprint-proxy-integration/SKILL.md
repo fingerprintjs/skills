@@ -1,14 +1,31 @@
 ---
 name: fingerprint-proxy-integration
-description: Protect the Fingerprint JS Agent (v4) against ad blockers and improve identification accuracy by routing it through a first-party custom subdomain or a proxy integration (Cloudflare, CloudFront, Azure, Nginx) using the v4 `endpoints` option. Use to maximize accuracy after basic identification works, or when requests to the default Fingerprint domain are being blocked.
+description: Serve the Fingerprint JS Agent (v4) from your own domain — a first-party custom subdomain or a proxy integration (Cloudflare, CloudFront, Azure, Nginx) via the v4 `endpoints` option — so fraud-prevention identification on a site you operate stays accurate and consistent. Use after basic identification works, when identification is unreliable or short-lived in production.
 ---
 
-# Fingerprint — Protect against ad blockers (custom subdomain / proxy)
+# Fingerprint — First-party deployment (custom subdomain / proxy)
 
-Maps to the dashboard **"Protect against ad blockers"** Get Started step. By default the JS Agent
-loads its script and sends requests to Fingerprint's domain, which some browsers and ad blockers
-block — dropping identification accuracy. Routing the agent through **your own domain** makes the
-traffic first-party so it isn't blocked.
+By default the JS Agent loads its script from, and sends requests to, Fingerprint's domain — a
+third-party context for your site. Browsers restrict third-party storage (Safari's ITP, Firefox's
+ETP, and storage partitioning generally), which shortens how long an identifier survives and makes
+identification less consistent. Serving the agent from **your own domain** puts it in the same
+first-party context as the rest of your app, which is Fingerprint's recommended production setup.
+In the dashboard this step is listed under *Protect against ad blockers*.
+
+## Scope and consent
+This changes **where requests go**, not what you are allowed to collect. It is for a site you
+operate, and it does not reduce any disclosure obligation you already have.
+
+- Use it only on **domains you own or operate**, to identify visitors to *that* site.
+- Keep it purpose-limited to **security, fraud prevention and abuse detection**. It is not a
+  mechanism for advertising, ad targeting, audience building, or profiling people across sites you
+  don't control.
+- **Disclose device identification in your privacy notice**, and obtain consent where the law that
+  applies to your users requires it (e.g. GDPR/ePrivacy, CCPA/CPRA). Moving the endpoint to your
+  own domain does not change this; confirm the specifics with whoever owns privacy compliance at
+  your company.
+- **Honour opt-outs and deletion requests.** Don't use first-party deployment to re-identify
+  someone who has opted out, or to work around a choice a user has expressed.
 
 > **This API changed in v4.** The old `scriptUrlPattern`, `endpoint` (singular), `tlsEndpoint`, and
 > `disableTls` options were **removed** and consolidated into a single **`endpoints`** option.
@@ -17,10 +34,10 @@ traffic first-party so it isn't blocked.
 
 There are two approaches, both configured in the dashboard and then pointed at from code:
 
-| Approach | Effort | Accuracy | When |
+| Approach | Effort | Consistency | When |
 | --- | --- | --- | --- |
 | **Custom subdomain** | Low — one DNS CNAME and two A records | Good | Simplest setup; quick win |
-| **Proxy integration** | Higher — deploy a proxy | Best | Maximum accuracy; you control the edge |
+| **Proxy integration** | Higher — deploy a proxy | Best | You control the edge |
 
 You can start with a subdomain and move to a proxy later — both change only **where the agent loads
 its script from** and the **`endpoints`** value, not your application logic.
@@ -54,7 +71,7 @@ its script from** and the **`endpoints`** value, not your application logic.
 > blocked on verification, it's a DNS-provider/propagation issue, not a code problem; they can set
 > `endpoints` once it verifies.
 
-## Proxy integration (max accuracy)
+## Proxy integration
 1. Deploy one of Fingerprint's proxy integrations at your edge — **Cloudflare Worker**, **AWS
    CloudFront + Lambda@Edge**, **Azure**, or **Nginx** — using the official integration package
    for your platform. It forwards a path on your domain to the Fingerprint ingest API with your
@@ -72,7 +89,9 @@ its script from** and the **`endpoints`** value, not your application logic.
   return 200.
 
 ## Best practices
-- Prefer the subdomain for a fast first step; graduate to a proxy when you need maximum accuracy.
+- Prefer the subdomain for a fast first step; move to a proxy when you want to own the edge.
 - Don't expose the proxy secret to the browser — it lives only in your edge proxy config.
 - If a request to your subdomain/proxy fails, the agent can fall back to Fingerprint's default
   endpoints; still handle identify errors so the flow degrades gracefully.
+- Point the subdomain at your own infrastructure only. Don't route another party's traffic through
+  it, and don't reuse it for anything beyond the identification described in your privacy notice.

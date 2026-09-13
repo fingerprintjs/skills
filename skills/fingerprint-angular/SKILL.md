@@ -43,6 +43,7 @@ it (on load, or on an action like login or checkout).
 - Register `provideFingerprint` once at the app root; don't re-provide it per component.
 - `getVisitorData()` is async — await it inside the action handler and handle errors so a failed
   identify doesn't break the flow.
-- **Production:** protect the agent from ad blockers with a custom subdomain or proxy —
-  https://docs.fingerprint.com/docs/protecting-the-javascript-agent-from-adblockers.
+- **Production:** serve the agent from your own domain (first-party custom subdomain or proxy) so
+  identification stays consistent under browser third-party storage limits — see
+  `fingerprint-proxy-integration`.
 - Don't use legacy `@fingerprintjs/fingerprintjs-pro`, `FingerprintJS.load()`, or `scriptUrlPattern`.

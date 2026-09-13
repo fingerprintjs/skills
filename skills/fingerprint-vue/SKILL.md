@@ -42,6 +42,7 @@ client-side. For plain HTML or an unsupported framework, use `@fingerprint/agent
 - Region must match the workspace (`us` | `eu` | `ap`).
 - Register the plugin once at the app root; don't re-instantiate per component. Don't block the UI
   on identification — handle the composable's `isLoading` / `error` state.
-- **Production:** protect the agent from ad blockers with a custom subdomain or proxy —
-  https://docs.fingerprint.com/docs/protecting-the-javascript-agent-from-adblockers.
+- **Production:** serve the agent from your own domain (first-party custom subdomain or proxy) so
+  identification stays consistent under browser third-party storage limits — see
+  `fingerprint-proxy-integration`.
 - Don't use legacy `@fingerprintjs/fingerprintjs-pro`, `FingerprintJS.load()`, or `scriptUrlPattern`.

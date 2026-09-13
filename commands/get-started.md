@@ -8,7 +8,7 @@ allowed-tools: [Read, Glob, Grep, Bash, Edit, Write, Skill]
 
 Invoke the **`fingerprint-get-started`** skill (Skill tool) and follow it. It detects the project's
 tech stack and walks the full Get Started checklist — frontend install, server-side verification,
-ad-blocker protection, rules, tagging, and key protection — applying the matching per-stack and
+first-party deployment, rules, tagging, and key protection — applying the matching per-stack and
 feature skill for each step.
 
 The user invoked this with: `$ARGUMENTS` — if it's a path, get started in that directory; otherwise

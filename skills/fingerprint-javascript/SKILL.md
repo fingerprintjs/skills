@@ -71,6 +71,7 @@ instead — see `snippets/cdn.html`.
   `event_id` (with `cache_hit: true`), which fails server-side freshness and one-time-use checks —
   keep `get()` uncached for security-relevant actions.
 - Don't run the agent in a sandboxed iframe; it isn't supported.
-- **Production:** protect the agent from ad blockers with a custom subdomain or proxy —
-  https://docs.fingerprint.com/docs/protecting-the-javascript-agent-from-adblockers.
+- **Production:** serve the agent from your own domain (first-party custom subdomain or proxy) so
+  identification stays consistent under browser third-party storage limits — see
+  `fingerprint-proxy-integration`.
 - Don't use legacy `@fingerprintjs/fingerprintjs-pro`, `FingerprintJS.load()`, or `scriptUrlPattern`.

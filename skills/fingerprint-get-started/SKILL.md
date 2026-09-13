@@ -21,7 +21,7 @@ skill with the Skill tool; in other agents, load and follow the named skill.
    status of which steps below are done.
 2. **Report the checklist** with each step marked done / not done.
 3. **Walk the not-done steps in order.** For each, explain what it does, then apply the matching
-   skill and follow it. Steps that are dashboard-only (rules, request filtering, ad-blocker config,
+   skill and follow it. Steps that are dashboard-only (rules, request filtering, subdomain setup,
    team invites) can't be done from code — give the user the exact dashboard actions and offer to
    make any companion code change.
 4. **After each step, tell the user how to verify it** (the dashboard Get Started page checks the
@@ -79,7 +79,9 @@ Map detected frameworks to skills:
    > only identifies — a real trust decision needs the server to verify the event. This is the
    > recommended next step, not a hard requirement (Next.js does both in one skill).
 
-3. **Protect against ad blockers** — first-party custom subdomain or proxy integration.
+3. **Serve the agent from your own domain** (listed in the dashboard as *Protect against ad
+   blockers*) — a first-party custom subdomain or proxy integration, so identification stays
+   accurate and consistent under browser third-party storage limits.
    → Apply `fingerprint-proxy-integration`. *Done when the agent loads from your own domain.*
 
 ### Beyond the basics

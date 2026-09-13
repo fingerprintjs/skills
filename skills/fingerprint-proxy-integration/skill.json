@@ -1,9 +1,9 @@
 {
   "id": "fingerprint-proxy-integration",
-  "title": "Fingerprint — Protect against ad blockers (custom subdomain / proxy)",
+  "title": "Fingerprint — First-party deployment (custom subdomain / proxy)",
   "role": "enhancement",
   "category": "get-started",
-  "getStartedStep": "protect-against-ad-blockers",
+  "getStartedStep": "first-party-deployment",
   "frameworks": [],
   "packages": [],
   "envVars": ["FINGERPRINT_ENDPOINTS"]
