@@ -3,9 +3,20 @@
 
 function evaluateSignals(event, { risk = 'high' } = {}) {
   const reasons = []
+  // Absent when no bot was detected; when present, name/provider/category/identity/confidence are
+  // all set. The three-valued `event.bot` is a verdict, not a description — it can't separate
+  // Googlebot from an AI agent from Playwright, and each of those wants a different answer.
+  const bot = event.bot_info
+
+  // Claims a public identity (Googlebot, GPTBot) and fails verification. Nothing legitimate does
+  // this, so it outranks every other signal and every action's risk level.
+  if (bot?.identity === 'spoofed') return { decision: 'block', reasons: [`spoofed_bot:${bot.name}`] }
 
   // Hard blocks — reject regardless of action risk.
-  if (event.bot && event.bot !== 'not_detected') reasons.push('bot')
+  if (event.bot === 'bad') reasons.push(`bot:${bot?.category ?? 'automation'}`)
+  // A declared crawler is not fraud. Blocking a verified one on a crawlable route is an SEO
+  // outage, so only the high-risk actions — where no crawler belongs — fail closed on it.
+  if (event.bot === 'good' && risk === 'high') reasons.push(`crawler:${bot?.name ?? 'unknown'}`)
   if (event.tampering) reasons.push('tampering')
   if (reasons.length) return { decision: 'block', reasons }
 

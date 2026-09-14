@@ -16,11 +16,17 @@ restatement of them).
 
 - **Retrieval over pre-trained knowledge.** SDK APIs, option names, package versions, and event
   field names drift between versions (e.g. v4 removed `scriptUrlPattern`/`endpoint` in favor of
-  `endpoints`). Every skill that asserts an API or field name must include a short "verify against
-  the docs" note pointing at the authoritative source — the docs index
-  (https://docs.fingerprint.com/llms.txt), the relevant SDK reference, the Server API OpenAPI
-  schema (https://github.com/fingerprintjs/fingerprint-pro-server-api-openapi), or the Fingerprint
-  MCP event-schema resource. Confirm specifics before writing them as fact.
+  `endpoints`). Confirm every API name, option and field against the authoritative source before
+  writing it as fact — the Server API OpenAPI schema
+  (https://github.com/fingerprintjs/fingerprint-pro-server-api-openapi) or the Fingerprint MCP
+  event-schema resource for event fields, the installed SDK for its own surface, the docs
+  (https://docs.fingerprint.com/llms.txt) for product behaviour and dashboard steps.
+- **State facts; cite rather than caveat.** A skill states what is true and is complete enough to
+  act on offline — many agents run with no network. So no "verify against the docs", "this may have
+  changed" or "check the latest version" notes: those read as permission to skip the field list, and
+  that is how a skill ends up linking a docs page while omitting the fields the page describes.
+  Instead give a plain `> Docs:` link to the **specific** page a maintainer would re-read to check
+  the claim. One or two per skill; a wall of URLs invites an agent to go read instead of act.
 - **Production only.** Never bake staging hosts, non-default endpoints, or environment overrides
   into snippets or skills. Read keys/region from env vars by name.
 - **Secrets never reach the client.** `FINGERPRINT_SECRET_API_KEY` is server-side only; only the

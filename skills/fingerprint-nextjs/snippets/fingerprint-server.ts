@@ -44,7 +44,12 @@ export async function verifyEvent(eventId?: string): Promise<VerifyResult> {
   if ((id.confidence?.score ?? 0) < MIN_CONFIDENCE) return { ok: false, reason: 'low_confidence' }
 
   // Smart signals (fail closed for high-risk actions)
-  if (event.bot && event.bot !== 'not_detected') return { ok: false, reason: 'bot' }
+  // Blocking every bot is right for a login or checkout; on a crawlable route it takes out search
+  // crawlers too — see the fingerprint-smart-signals skill.
+  if (event.bot && event.bot !== 'not_detected') {
+    const bot = [event.bot_info?.category ?? event.bot, event.bot_info?.name].filter(Boolean)
+    return { ok: false, reason: `bot:${bot.join(':')}` }
+  }
   if (event.vpn || event.proxy) return { ok: false, reason: 'anonymizing_network' }
   if (event.tampering) return { ok: false, reason: 'tampering' }
 

@@ -41,7 +41,10 @@ from the client.
 - `event.identification.confidence.score` — 0..1 (probability of a false-positive identification)
 - `event.timestamp` — Unix ms of the event
 - `event.replayed` — `true` if the payload was replayed
-- `event.bot` — `"bad" | "good" | "not_detected"`
+- `event.bot` — `"bad" | "good" | "not_detected"`, the coarse verdict. When a bot was detected,
+  `event.bot_info` (`name`, `provider`, `category`, `identity`, `confidence`) and `event.bot_type`
+  say *which* bot: `bot` alone can't separate Googlebot from an AI agent from Playwright. See
+  `fingerprint-smart-signals`.
 - `event.vpn`, `event.proxy`, `event.tampering`, `event.incognito` — booleans
 - `event.suspect_score` — weighted Smart-Signals score (integer)
 - `event.velocity` (object), `event.ip_blocklist` (object: `attack_source`, `email_spam`,
@@ -53,7 +56,8 @@ from the client.
   than your window (e.g. 2 minutes) — prevents reuse of an old `event_id`.
 - **Confidence:** require `event.identification.confidence.score >= 0.9` for the action.
 - **Smart Signals** (fail-closed for high-risk actions): `event.bot !== "not_detected"`,
-  `event.vpn`, `event.proxy`, `event.tampering`.
+  `event.vpn`, `event.proxy`, `event.tampering`. Blocking every bot is
+  right here and wrong on a crawlable route, where it takes out search-engine crawlers too.
 - **Identity match:** bind `visitor_id` ↔ user on first trusted use; re-check on later actions.
 
 ## Notes
