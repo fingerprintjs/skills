@@ -21,7 +21,9 @@ const MIN_CONFIDENCE = 0.9 // minimum identification confidence to trust the act
 
 export type VerifyResult =
   | { ok: true; visitorId: string }
-  | { ok: false; reason: string }
+  // `reason` is a closed set — safe to branch on and to group by in metrics. `detail` is free-form
+  // context for your logs; don't return it to the client.
+  | { ok: false; reason: string; detail?: string }
 
 export async function verifyEvent(eventId?: string): Promise<VerifyResult> {
   if (!eventId) return { ok: false, reason: 'missing_event_id' }
@@ -47,10 +49,16 @@ export async function verifyEvent(eventId?: string): Promise<VerifyResult> {
   // Any bot is the right answer for a login or a checkout — no crawler belongs there. On a
   // crawlable route it is not: that set includes verified search-engine crawlers. There, block
   // event.bot_info.identity === 'spoofed' and decide the AI categories per route instead — see the
-  // fingerprint-smart-signals skill. bot_info also names the bot, which is what makes the rejection
-  // worth logging.
+  // fingerprint-smart-signals skill.
   if (event.bot && event.bot !== 'not_detected') {
-    return { ok: false, reason: `bot:${event.bot_info?.category ?? event.bot}` }
+    // `category` in `reason` because it is one of 16 values — you can branch on it and count it.
+    // `name` ("ChromeHeadless", "GPTBot", "Browserbase Agent") is unbounded, and it is the bit
+    // actually worth reading in a log, so it goes in `detail`.
+    return {
+      ok: false,
+      reason: `bot:${event.bot_info?.category ?? event.bot}`,
+      detail: event.bot_info?.name,
+    }
   }
   if (event.vpn || event.proxy) return { ok: false, reason: 'anonymizing_network' }
   if (event.tampering) return { ok: false, reason: 'tampering' }
