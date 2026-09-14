@@ -35,14 +35,14 @@ Each Smart Signal is a top-level field on the event. The web-relevant set:
 | `raw_device_attributes` | low-level device attributes | Custom heuristics |
 
 > Field availability depends on your plan and platform (web vs. mobile), so guard each access
-> (`event.vpn ?? false`) so a missing signal doesn't throw. Event schema: OpenAPI
-> (https://github.com/fingerprintjs/fingerprint-pro-server-api-openapi) or the Fingerprint MCP
-> event-schema resource.
+> (`event.vpn ?? false`) so a missing signal doesn't throw. Every field is specified in the v4
+> Server API reference: https://docs.fingerprint.com/reference/server-api-get-event (source:
+> https://github.com/fingerprintjs/fingerprint-pro-server-api-openapi, also served as the
+> Fingerprint MCP event-schema resource).
 
 ## Bot detection
-> Docs: https://docs.fingerprint.com/docs/ai-agents (the fullest treatment of `bot_info`) ·
-> https://fingerprint.com/bot-directory/ (which bots are recognized).
-> `confidence` and `bot_type` are in the OpenAPI schema only, not the prose docs.
+> Docs: https://docs.fingerprint.com/docs/bot-detection/overview (covers AI tools and traditional
+> automation alike) · https://fingerprint.com/bot-directory/ (which bots are recognized).
 >
 > Bot Detection needs **Pro Plus or Enterprise**, and the AI-tool fields need **Server API v4+**.
 
@@ -71,7 +71,8 @@ event where a bot was detected, absent otherwise.
                 "category": "browser_automation", "identity": "unknown", "confidence": "medium" } }
 ```
 
-**`identity` carries the most policy weight and has no equivalent in `bot`:**
+**`identity` carries the most policy weight and has no equivalent in `bot`**
+(defined at https://docs.fingerprint.com/docs/ai-agents, which is the fullest prose on it):
 - `verified` — signature verified *and* the bot is operated exclusively by its vendor. Googlebot
   really is Googlebot. Allow.
 - `signed` — signature verified against the agent's public key directory (Web Bot Auth), but run by
