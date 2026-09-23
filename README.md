@@ -21,8 +21,8 @@ server-side verification that makes it actually secure.
   the assistant at Fingerprint's live documentation and tells it to confirm package names, options,
   and event fields against the source — so you get today's API, not a stale guess.
 - **Beyond install.** A guided `/get-started` flow walks you through the full Fingerprint setup:
-  reading Smart Signals, protecting against ad blockers, building rules, tagging events, and locking
-  down your public key.
+  reading Smart Signals, serving the agent from your own domain, building rules, tagging events,
+  and locking down your public key.
 
 ## Install
 
@@ -88,7 +88,7 @@ Clone this repo and copy the skill folders into the appropriate directory for yo
 **Get Started** — turn a basic install into production-grade protection:
 
 - **Smart Signals** — act on bot, VPN, proxy, tampering, velocity, and more, server-side.
-- **Ad-blocker protection** — serve the agent from your own domain for maximum accuracy.
+- **First-party deployment** — serve the agent from your own domain for consistent identification.
 - **Rules Engine** — block or allow visitors with no-code rules.
 - **Event tagging** — attach your own user / account / order IDs to identifications.
 - **Public key protection** — restrict your key to your own origins.

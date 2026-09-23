@@ -1,4 +1,5 @@
-// v4: point the JS Agent at your first-party domain so ad blockers don't block it.
+// v4: serve the JS Agent from your own domain, so identification runs in the same first-party
+// context as the rest of your app. Only ever point this at a domain you operate.
 // The single `endpoints` option replaces v3's scriptUrlPattern / endpoint / tlsEndpoint / disableTls.
 // Read it from env so each environment can differ without code changes.
 
