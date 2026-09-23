@@ -30,13 +30,13 @@ operate, and it does not reduce any disclosure obligation you already have.
 > **This API changed in v4.** The old `scriptUrlPattern`, `endpoint` (singular), `tlsEndpoint`, and
 > `disableTls` options were **removed** and consolidated into a single **`endpoints`** option.
 > Docs: https://docs.fingerprint.com/docs/custom-subdomain-setup ·
-> https://docs.fingerprint.com/reference/migrating-from-v3-to-v4.
+> API: https://docs.fingerprint.com/reference/subdomainscontroller_create.
 
-There are two approaches, both configured in the dashboard and then pointed at from code:
+Choose a custom subdomain or a proxy integration, then point the existing SDK setup at it:
 
 | Approach | Effort | Consistency | When |
 | --- | --- | --- | --- |
-| **Custom subdomain** | Low — one DNS CNAME and two A records | Good | Simplest setup; quick win |
+| **Custom subdomain** | Low — DNS records returned by Fingerprint | Good | Simplest setup; quick win |
 | **Proxy integration** | Higher — deploy a proxy | Best | You control the edge |
 
 You can start with a subdomain and move to a proxy later — both change only **where the agent loads
@@ -55,21 +55,101 @@ its script from** and the **`endpoints`** value, not your application logic.
     `FingerprintProvider` `endpoints` prop). See `snippets/subdomain-options.js`.
 
 ## Custom subdomain
-1. In the dashboard, go to **Settings → Subdomains → Add subdomain** and register a **custom
-   subdomain** (e.g. `metrics.yourdomain.com`) — it must be on the same site as your app. Before
-   creating it, confirm the exact FQDN with the user: subdomains are immutable, so changing one
-   requires deleting and recreating it. Avoid FQDNs containing `fingerprint` or `fingerprintjs` as
-   a substring; the API rejects them with a 400 response. Workspaces are limited to 50 subdomains
-   (5 on free trial plans).
-2. Add the **CNAME** record it gives you at your DNS provider to verify domain ownership and let
-   the SSL certificate be issued. Once the certificate shows **Issued**, add the two **A records**
-   the dashboard provides to finish the connection. (You can sanity-check with `dig <host> +short`.)
-3. Set `endpoints` to your subdomain (and, for CDN installs, import the script from it). See
-   `snippets/subdomain-options.js`.
 
-> DNS/cert validation can take up to 24 hours. This DNS step is outside the SDK — if the user is
-> blocked on verification, it's a DNS-provider/propagation issue, not a code problem; they can set
-> `endpoints` once it verifies.
+Creating a subdomain does not make it usable. Only server status `active` permits setting
+`endpoints` or switching the script URL. DNS and certificate issuance take minutes to days, so a
+pending run ends with a clear next step, never a polling loop.
+
+### Pick an executor
+
+Use the first one available. Authentication belongs to the executor: never ask for, read or pass a
+Management API key, and never fall back to direct HTTP calls.
+
+1. The CLI's host-side subdomain tools, when running inside `npx fingerprint`.
+2. Fingerprint MCP subdomain tools, when the server is connected.
+3. `fingerprint subdomains` commands, when you have a shell and the CLI is installed
+   (`fingerprint subdomains --help` lists them).
+4. None of the above: say you can't manage subdomains from here and use the Dashboard fallback.
+
+Use only operations actually exposed by the current executor; being inside `npx fingerprint` or
+having the MCP connected does not guarantee the subdomain tools exist.
+
+| Operation | Tool | CLI |
+| --- | --- | --- |
+| List | `list_subdomains` | `fingerprint subdomains list --json` |
+| Read | `get_subdomain` `{ id }` | `fingerprint subdomains get <id-or-hostname> --json` |
+| Create | `create_subdomain` `{ hostname }` | `fingerprint subdomains create <hostname> --json` |
+| Verify | `verify_subdomain` `{ id }` | `fingerprint subdomains verify <id-or-hostname> --json` |
+| Delete | `delete_subdomain` `{ id }` | `fingerprint subdomains delete <id-or-hostname> --json --yes` |
+
+The CLI prints `{ "data": ... }` on success and `{ "error": { "kind", "message", ... } }` with a
+nonzero exit on failure; `list` follows pagination. `--yes` on delete is only for a deletion the
+user already approved.
+
+### Find or create the subdomain
+
+- Start by listing the workspace's subdomains, never from conversation memory. Normalize the
+  hostname (trim, drop a trailing dot, lowercase) and match exactly. One match: read it by ID.
+  Several: show hostname, ID and status and ask. No hostname supplied: show the candidates and ask.
+- No match: confirm the exact hostname and the intent to create before creating. It must be an
+  unused hostname on a domain the user operates, not the site's own hostname (its A records will
+  point at Fingerprint). Constraints: no apex, 64 characters max, no `fingerprint` or
+  `fingerprintjs` in the FQDN, immutable once created, workspace limit typically 50 (5 on trial).
+- Read status and `dns_records` before continuing. `active` or terminal: skip to the status
+  branch. Only `pending` needs DNS work.
+
+### Present the DNS records together
+
+Show every record in `dns_records`: `verification` (CNAME), `routing[]` (A) and `caa` when present,
+each with `type`, `host`, `value` and its own `status`. They are all added in one pass; the A
+records do not wait for the certificate. When some are already `validated`, name only the ones
+still pending.
+
+If the agent has an authorized DNS-provider tool, offer to apply exactly these records after the
+user approves. Otherwise the user adds them at their DNS provider, which may not be their web host.
+On Cloudflare DNS the records must be **DNS only** (proxying off). Domain Connect is not required;
+the Dashboard may offer its own one-click setup.
+
+Once the records are in, verify at most once per run, then read the resource again: the verify
+response can carry stale record statuses (the CLI command and the `verify_subdomain` tool already
+do this read for you).
+
+### Branch on status
+
+| Status | Action |
+| --- | --- |
+| `pending` | Leave `endpoints` and code untouched. Name the unresolved records, or say certificate issuance is in progress when all are `validated`. End as waiting; no polling, no second verify. |
+| `active` | Configure the endpoint (below). |
+| `timed_out` | Offer delete and recreate for the named hostname; both need explicit approval. Then present the new records. |
+| `failed` | Stop. Show hostname, ID and the returned details. |
+
+Status comes from the server only, never from elapsed time or from the records; all records
+`validated` is not `active`. A pending run ends with hostname, ID, what is outstanding and how to
+resume: ask the agent to resume setup for the same hostname; `fingerprint subdomains get <hostname>`
+only checks its status. Get Started step 3 is not complete while waiting.
+
+### Configure only after `active`
+
+If `configure_subdomain_endpoint` is available, call it with the ID and use the env var it returns
+in the existing provider/start options. Otherwise follow "How to apply" below with the framework's
+env convention; never read or print `.env`, and if you cannot write the env file, give the user the
+exact variable and value. For a CDN install, switch the import URL and `endpoints` directly. Keep
+the public key and region as they are.
+
+### Errors
+
+Surface the executor's `kind` and `message` and stop; they are already actionable
+(`not_authenticated` → `fingerprint login`, `invalid_subdomain` → the returned violations,
+`duplicate` → resolve that hostname again, `limit_reached`, `rate_limited` → `retry_after`,
+`unavailable`). Never retry in a loop, never delete to make room, never ask the user to paste a key.
+
+### Dashboard fallback
+
+**Settings → Subdomains** in the Fingerprint Dashboard: resume the existing hostname or **New
+subdomain**, add the displayed records or use one-click setup, then **Check DNS records**. Make
+the code change only once the Dashboard shows **Active**.
+
+`webhook_url` is for CI/CD with a public callback URL, not for a local agent session.
 
 ## Proxy integration
 1. Deploy one of Fingerprint's proxy integrations at your edge — **Cloudflare Worker**, **AWS
