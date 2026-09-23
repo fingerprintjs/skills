@@ -92,8 +92,10 @@ user already approved.
   hostname (trim, drop a trailing dot, lowercase) and match exactly. One match: read it by ID.
   Several: show hostname, ID and status and ask. No hostname supplied: show the candidates and ask.
 - No match: confirm the exact hostname and the intent to create before creating. It must be an
-  unused hostname on a domain the user operates, not the site's own hostname (its A records will
-  point at Fingerprint). Constraints: no apex, 64 characters max, no `fingerprint` or
+  unused subdomain of the same site the app runs on (e.g. `metrics.yourdomain.com` for
+  `yourdomain.com`), never the site's own hostname (its A records will point at Fingerprint), and a
+  subdomain of a different domain the user owns does not count as first-party. Constraints: no apex,
+  64 characters max, no `fingerprint` or
   `fingerprintjs` in the FQDN, immutable once created, workspace limit typically 50 (5 on trial).
 - Read status and `dns_records` before continuing. `active` or terminal: skip to the status
   branch. Only `pending` needs DNS work.
