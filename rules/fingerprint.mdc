@@ -21,7 +21,7 @@ STOP. Your knowledge of Fingerprint SDK options, package names, and event field 
 
 - Docs index: https://docs.fingerprint.com/llms.txt
 - v3 → v4 migration: https://docs.fingerprint.com/reference/migrating-from-v3-to-v4
-- Server API event schema (OpenAPI): https://github.com/fingerprintjs/fingerprint-pro-server-api-openapi
+- Server API event schema (OpenAPI): https://github.com/fingerprintjs/openapi
 - MCP server: `https://mcp.fpjs.io/mcp` — the event-schema resource is authoritative for field questions
 
 ## Hard rules

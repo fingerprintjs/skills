@@ -17,10 +17,10 @@ restatement of them).
 - **Retrieval over pre-trained knowledge.** SDK APIs, option names, package versions, and event
   field names drift between versions (e.g. v4 removed `scriptUrlPattern`/`endpoint` in favor of
   `endpoints`). Confirm every API name, option and field against the authoritative source before
-  writing it as fact — the Server API OpenAPI schema
-  (https://github.com/fingerprintjs/fingerprint-pro-server-api-openapi) or the Fingerprint MCP
-  event-schema resource for event fields, the installed SDK for its own surface, the docs
-  (https://docs.fingerprint.com/llms.txt) for product behaviour and dashboard steps.
+  writing it as fact — the Server API OpenAPI schema (https://github.com/fingerprintjs/openapi)
+  or the Fingerprint MCP event-schema resource for event fields, the installed SDK for its own
+  surface, the docs (https://docs.fingerprint.com/llms.txt) for product behaviour and dashboard
+  steps.
 - **State facts; cite rather than caveat.** A skill states what is true and is complete enough to
   act on offline — many agents run with no network. So no "verify against the docs", "this may have
   changed" or "check the latest version" notes: those read as permission to skip the field list, and
