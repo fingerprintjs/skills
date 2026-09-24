@@ -10,7 +10,7 @@ your frontend sends, fetch the event server-side, and read the verified identifi
 Signals. The server is the source of truth — never trust a `visitor_id` or a decision sent straight
 from the client.
 
-> Docs: https://docs.fingerprint.com/reference/node-server-sdk · event schema: OpenAPI (https://github.com/fingerprintjs/fingerprint-pro-server-api-openapi) or the Fingerprint MCP event-schema resource.
+> Docs: https://docs.fingerprint.com/reference/node-server-sdk · event schema: OpenAPI (https://github.com/fingerprintjs/openapi) or the Fingerprint MCP event-schema resource.
 
 ## Package
 `@fingerprint/node-sdk` — install the latest version.
