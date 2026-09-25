@@ -33,7 +33,12 @@ use `@fingerprint/agent` instead.)
 
 3. **Get the identification where you need it.** Use `useVisitorData`. For identify-on-demand pass
    `{ immediate: false }` and call `getData()` on the action you care about; it returns
-   `{ visitor_id, event_id, ... }`. See `snippets/CreateAccountForm.svelte`.
+   `{ visitor_id, event_id, ... }`. See `snippets/use-visitor-data.svelte`.
+
+   Identification is where this skill stops. It gives you a hint, not a trust decision — anything
+   from the browser can be forged. If the app has a backend, send the `event_id` with the request
+   and verify it there (`fingerprint-node` / `fingerprint-python`); if it doesn't, the identification
+   is complete on its own and there is nothing to add.
 
 4. **Verify it works.** Disable your ad blocker, run the dev server, trigger the call, and confirm
    a `visitor_id` is logged in the browser console (or that the event appears on the dashboard
