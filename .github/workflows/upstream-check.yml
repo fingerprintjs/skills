@@ -1,0 +1,82 @@
+name: Upstream check
+
+on:
+  schedule:
+    # Mondays, 06:17 UTC
+    - cron: '17 6 * * 1'
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'skills/**'
+      - '.github/scripts/**'
+      - '.github/workflows/upstream-check.yml'
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: upstream-check-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Check upstream
+        id: check
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -o pipefail
+          node .github/scripts/check-upstream.mjs 2>&1 | tee "$RUNNER_TEMP/upstream-check.log"
+
+      - name: Open or update drift issue
+        if: steps.check.outcome == 'failure' && github.event_name == 'schedule'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs')
+            const title = 'Upstream drift detected'
+            const log = fs.readFileSync(`${process.env.RUNNER_TEMP}/upstream-check.log`, 'utf8')
+            const run = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`
+            const body = [
+              `The weekly upstream check failed on \`${context.sha.slice(0, 7)}\`.`,
+              '',
+              `Run: ${run}`,
+              '',
+              'These are not version pins — the repo pins nothing. They are package names, exported',
+              'symbols, JS Agent path majors or links that no longer match what upstream publishes.',
+              '',
+              '```',
+              log.slice(-55000),
+              '```',
+            ].join('\n')
+
+            // reuse the existing open issue instead of opening a new one every week
+            const open = await github.paginate(github.rest.issues.listForRepo, {
+              ...context.repo, state: 'open', per_page: 100,
+            })
+            const existing = open.find((i) => !i.pull_request && i.title === title)
+
+            if (existing) {
+              await github.rest.issues.update({ ...context.repo, issue_number: existing.number, body })
+              await github.rest.issues.createComment({
+                ...context.repo, issue_number: existing.number,
+                body: `Still drifting as of ${new Date().toISOString().slice(0, 10)} — ${run}`,
+              })
+              core.notice(`Updated issue #${existing.number}`)
+            } else {
+              const { data } = await github.rest.issues.create({ ...context.repo, title, body })
+              core.notice(`Opened issue #${data.number}`)
+            }
+
+      - name: Fail if drift detected
+        if: steps.check.outcome == 'failure'
+        run: exit 1
