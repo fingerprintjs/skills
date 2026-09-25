@@ -39,8 +39,11 @@ Choose a custom subdomain or a proxy integration, then point the existing SDK se
 | **Custom subdomain** | Low — DNS records returned by Fingerprint | Good | Simplest setup; quick win |
 | **Proxy integration** | Higher — deploy a proxy | Best | You control the edge |
 
-You can start with a subdomain and move to a proxy later — both change only **where the agent loads
-its script from** and the **`endpoints`** value, not your application logic.
+Pick one. A custom subdomain is Fingerprint-managed DNS on your domain (this skill's
+[Custom subdomain](#custom-subdomain) section); a proxy integration is code you deploy at your edge
+([Proxy integration](#proxy-integration)). Never set up both for the same app. You can start with a
+subdomain and move to a proxy later — both change only **where the agent loads its script from**
+and the **`endpoints`** value, not your application logic.
 
 ## The v4 `endpoints` option
 - `endpoints` sets where the agent **sends identification requests**. It takes a single string
@@ -65,26 +68,22 @@ pending run ends with a clear next step, never a polling loop.
 Use the first one available. Authentication belongs to the executor: never ask for, read or pass a
 Management API key, and never fall back to direct HTTP calls.
 
-1. The CLI's host-side subdomain tools, when running inside `npx fingerprint`.
-2. Fingerprint MCP subdomain tools, when the server is connected.
-3. `fingerprint subdomains` commands, when you have a shell and the CLI is installed
-   (`fingerprint subdomains --help` lists them).
-4. None of the above: say you can't manage subdomains from here and use the Dashboard fallback.
+1. Fingerprint subdomain tools, when they are exposed to you: inside the `fingerprint` CLI wizard,
+   or through the Fingerprint MCP server. Use only the operations actually exposed; being inside
+   the wizard or having the MCP connected does not guarantee they exist.
+2. A shell with the CLI available: run the wizard, `npx fingerprint integrate --subdomain <hostname>`.
+   It creates the subdomain, waits for DNS, and points the app at it. Only if you must drive it
+   yourself, the `fingerprint subdomains` commands (`list`, `get`, `create`, `verify`, `delete`, all
+   with `--json`) do the same operations as the tools.
+3. Neither: use the [Dashboard](#dashboard) below.
 
-Use only operations actually exposed by the current executor; being inside `npx fingerprint` or
-having the MCP connected does not guarantee the subdomain tools exist.
-
-| Operation | Tool | CLI |
-| --- | --- | --- |
-| List | `list_subdomains` | `fingerprint subdomains list --json` |
-| Read | `get_subdomain` `{ id }` | `fingerprint subdomains get <id-or-hostname> --json` |
-| Create | `create_subdomain` `{ hostname }` | `fingerprint subdomains create <hostname> --json` |
-| Verify | `verify_subdomain` `{ id }` | `fingerprint subdomains verify <id-or-hostname> --json` |
-| Delete | `delete_subdomain` `{ id }` | `fingerprint subdomains delete <id-or-hostname> --json --yes` |
-
-The CLI prints `{ "data": ... }` on success and `{ "error": { "kind", "message", ... } }` with a
-nonzero exit on failure; `list` follows pagination. `--yes` on delete is only for a deletion the
-user already approved.
+| Operation | Tool |
+| --- | --- |
+| List | `list_subdomains` |
+| Read | `get_subdomain` `{ id }` |
+| Create | `create_subdomain` `{ hostname }` |
+| Verify | `verify_subdomain` `{ id }` |
+| Delete | `delete_subdomain` `{ id }` (only for a deletion the user approved) |
 
 ### Find or create the subdomain
 
@@ -132,11 +131,11 @@ only checks its status. Get Started step 3 is not complete while waiting.
 
 ### Configure only after `active`
 
-If `configure_subdomain_endpoint` is available, call it with the ID and use the env var it returns
-in the existing provider/start options. Otherwise follow "How to apply" below with the framework's
-env convention; never read or print `.env`, and if you cannot write the env file, give the user the
-exact variable and value. For a CDN install, switch the import URL and `endpoints` directly. Keep
-the public key and region as they are.
+Follow [How to apply](#how-to-apply-code-side) with the framework's env convention. Inside the
+wizard, reference the env variable the CLI names and stop: the CLI writes it. Elsewhere, never read
+or print `.env`; if you cannot write the env file, give the user the exact variable and value. For
+a CDN install, switch the import URL and `endpoints` directly. Keep the public key and region as
+they are.
 
 ### Errors
 
@@ -145,11 +144,16 @@ Surface the executor's `kind` and `message` and stop; they are already actionabl
 `duplicate` → resolve that hostname again, `limit_reached`, `rate_limited` → `retry_after`,
 `unavailable`). Never retry in a loop, never delete to make room, never ask the user to paste a key.
 
-### Dashboard fallback
+### Dashboard
 
-**Settings → Subdomains** in the Fingerprint Dashboard: resume the existing hostname or **New
-subdomain**, add the displayed records or use one-click setup, then **Check DNS records**. Make
-the code change only once the Dashboard shows **Active**.
+When no executor is available, the user does it in the Fingerprint Dashboard and you do the code:
+
+1. **Settings → Subdomains → New subdomain**, enter the hostname (or open the existing one).
+2. Add the records the Dashboard shows at the DNS provider, all at once, or use its one-click
+   setup when offered. On Cloudflare, DNS only (proxying off).
+3. **Check DNS records**, then wait for the status to read **Active**. This can take minutes.
+4. Only then apply [How to apply](#how-to-apply-code-side). Ask the user to confirm **Active**
+   before editing; creating the subdomain or adding the records is not enough.
 
 `webhook_url` is for CI/CD with a public callback URL, not for a local agent session.
 
