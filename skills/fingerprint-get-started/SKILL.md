@@ -21,7 +21,7 @@ skill with the Skill tool; in other agents, load and follow the named skill.
    status of which steps below are done.
 2. **Report the checklist** with each step marked done / not done.
 3. **Walk the not-done steps in order.** For each, explain what it does, then apply the matching
-   skill and follow it. Steps that are dashboard-only (rules, request filtering, subdomain setup,
+   skill and follow it. Steps that are dashboard-only (rules, request filtering,
    team invites) can't be done from code — give the user the exact dashboard actions and offer to
    make any companion code change.
 4. **After each step, tell the user how to verify it** (the dashboard Get Started page checks the
@@ -82,7 +82,8 @@ Map detected frameworks to skills:
 3. **Serve the agent from your own domain** (listed in the dashboard as *Protect against ad
    blockers*) — a first-party custom subdomain or proxy integration, so identification stays
    accurate and consistent under browser third-party storage limits.
-   → Apply `fingerprint-proxy-integration`. *Done when the agent loads from your own domain.*
+   → Apply `fingerprint-proxy-integration`. A `pending` subdomain leaves this step waiting, not
+   done. *Done when the agent loads and sends requests through your own domain.*
 
 ### Beyond the basics
 4. **Build your first rule** — no-code automatic protection via the Rules Engine.
