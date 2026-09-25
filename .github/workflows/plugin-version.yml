@@ -1,0 +1,93 @@
+name: Plugin version
+
+on:
+  pull_request:
+    paths:
+      - 'skills/**'
+      - 'commands/**'
+      - 'rules/**'
+      - 'AGENTS.md'
+      - 'README.md'
+
+permissions:
+  contents: write
+  pull-requests: read
+
+concurrency:
+  group: plugin-version-${{ github.event.pull_request.number }}
+  cancel-in-progress: false
+
+jobs:
+  bump:
+    # forks cannot be pushed to with GITHUB_TOKEN, and bot PRs bump themselves
+    if: >-
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      github.event.pull_request.user.type != 'Bot'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          fetch-depth: 0
+
+      - name: Bump plugin patch version if untouched
+        shell: bash
+        env:
+          BASE_REF: ${{ github.event.pull_request.base.ref }}
+          HEAD_REF: ${{ github.event.pull_request.head.ref }}
+        run: |
+          set -euo pipefail
+          git fetch origin "$BASE_REF"
+          base="origin/$BASE_REF"
+
+          claude=.claude-plugin/plugin.json
+          cursor=.cursor-plugin/plugin.json
+
+          read_version() { node -p "JSON.parse(require('fs').readFileSync(0,'utf8')).version" < "$1"; }
+
+          git show "$base:$claude" > /tmp/base-claude.json
+          git show "$base:$cursor" > /tmp/base-cursor.json
+
+          base_claude=$(read_version /tmp/base-claude.json)
+          base_cursor=$(read_version /tmp/base-cursor.json)
+          head_claude=$(read_version "$claude")
+          head_cursor=$(read_version "$cursor")
+
+          if [ "$head_claude" != "$base_claude" ] || [ "$head_cursor" != "$base_cursor" ]; then
+            echo "Plugin version already changed in this PR ($base_claude -> $head_claude / $base_cursor -> $head_cursor). Nothing to do."
+            exit 0
+          fi
+
+          # bump from the base version, so a re-run is a no-op rather than a second bump
+          next=$(node -e '
+            const pick = (a, b) => {
+              const n = (v) => v.split(".").map(Number)
+              const [x, y] = [n(a), n(b)]
+              for (let i = 0; i < 3; i++) { if ((x[i] || 0) !== (y[i] || 0)) return (x[i] || 0) > (y[i] || 0) ? a : b }
+              return a
+            }
+            const [maj, min, patch] = pick(process.argv[1], process.argv[2]).split(".").map(Number)
+            console.log(`${maj}.${min}.${patch + 1}`)
+          ' "$base_claude" "$base_cursor")
+
+          # rewrite only the version string so the files keep their formatting
+          for f in "$claude" "$cursor"; do
+            node -e '
+              const fs = require("fs")
+              const [file, next] = process.argv.slice(1)
+              const raw = fs.readFileSync(file, "utf8")
+              fs.writeFileSync(file, raw.replace(/("version"\s*:\s*")[^"]*(")/, `$1${next}$2`))
+            ' "$f" "$next"
+          done
+
+          if git diff --quiet -- "$claude" "$cursor"; then
+            echo "No change to write."
+            exit 0
+          fi
+
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add "$claude" "$cursor"
+          git commit -m "chore: bump plugin version to $next [skip ci]"
+          git push origin "HEAD:refs/heads/$HEAD_REF"
+          echo "Bumped $base_claude -> $next on both plugin manifests."
