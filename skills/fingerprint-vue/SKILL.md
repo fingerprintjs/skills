@@ -46,3 +46,5 @@ client-side. For plain HTML or an unsupported framework, use `@fingerprint/agent
   identification stays consistent under browser third-party storage limits — see
   `fingerprint-proxy-integration`.
 - Don't use legacy `@fingerprintjs/fingerprintjs-pro`, `FingerprintJS.load()`, or `scriptUrlPattern`.
+  The result fields are `visitor_id` and `event_id`; `visitorId` and `requestId` are v3 names and do
+  not exist in v4.
