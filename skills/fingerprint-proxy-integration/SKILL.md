@@ -106,10 +106,11 @@ each with `type`, `host`, `value` and its own `status`. They are all added in on
 records do not wait for the certificate. When some are already `validated`, name only the ones
 still pending.
 
-If the agent has an authorized DNS-provider tool, offer to apply exactly these records after the
-user approves. Otherwise the user adds them at their DNS provider, which may not be their web host.
-On Cloudflare DNS the records must be **DNS only** (proxying off). Domain Connect is not required;
-the Dashboard may offer its own one-click setup.
+How the records get added depends on where you run. Inside the wizard, the CLI takes it from here:
+it shows the records and waits for them; report the status and stop. Otherwise the user adds them
+at their DNS provider, which may not be their web host; if you have an authorized DNS-provider
+tool, offer to apply exactly these records after the user approves. On Cloudflare DNS the records
+must be **DNS only** (proxying off).
 
 Once the records are in, verify at most once per run, then read the resource again: the verify
 response can carry stale record statuses (the CLI command and the `verify_subdomain` tool already
