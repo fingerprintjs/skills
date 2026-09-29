@@ -38,7 +38,7 @@ operate, and it does not reduce any disclosure obligation you already have.
 
 | Approach | Who runs it | Effort | Pick it when |
 | --- | --- | --- | --- |
-| **Custom subdomain** | Fingerprint, behind DNS records on your domain | Low: three DNS records | Default. Any plan. The CLI sets it up. |
+| **Custom subdomain** | Fingerprint, behind DNS records on your domain | Low: three DNS records | Default. Any plan. Set up from the CLI or the dashboard. |
 | **Proxy integration** | You, at your edge (Cloudflare on any plan; CloudFront, Azure Front Door, Akamai, Fastly on Enterprise) | Higher: deploy and maintain a proxy | You need Safari cookie lifetime of one year instead of seven days, IPv6, unlimited subdomains and paths, or WAF/logging on identification traffic |
 
 Never set up both for the same app. Both change only where the agent loads its script from and the
@@ -65,7 +65,12 @@ even all records reading `validated` are not enough. Only `active` permits setti
 switching the script URL. DNS and certificate issuance take minutes to hours (the docs allow up to
 24 hours), so a pending setup ends the run with a clear next step, never a polling loop.
 
-### 1. Fastest path: the Fingerprint CLI does it
+There are three equal ways to register the subdomain and get its DNS records. They all create the
+same resource in the same workspace, so a subdomain started in one place can be finished in
+another: the CLI wizard, the `fingerprint subdomains` commands, or the dashboard. Use whichever
+the user is already in; if they have created one in the dashboard, do not create another.
+
+### The CLI wizard
 
 The `npx fingerprint` wizard offers this step once identification works. To start it directly, or
 to pick up a pending one where it stopped:
@@ -96,9 +101,9 @@ Follow the CLI's prompt: list first, create only the hostname the CLI named and 
 there, and while it is pending change no code and keep your report to a sentence or two. The CLI
 prints the records and the next step itself. Once active, reference the env variable the CLI
 names in the provider options and stop; the CLI writes it. There is no delete tool: deleting is a
-user decision made through the command below.
+user decision made through the command below or in the dashboard.
 
-### 2. Driving it yourself from a shell
+### The `fingerprint subdomains` commands
 
 The same operations as commands, for an agent with a shell or a user at a terminal. Sign in once
 with `fingerprint login`; the CLI keeps a workspace-scoped key in the user's config directory and
@@ -130,10 +135,10 @@ them and stop; they are already actionable:
 Never retry in a loop, never delete to make room, never ask the user to paste a key, and never
 call the Management API over raw HTTP from a skill run.
 
-### 3. Dashboard
+### The dashboard
 
-When neither the wizard nor the CLI is available, the user does this in the dashboard and you do
-the code:
+The user registers the subdomain and adds the records themselves, and you do the code. This is
+the only path with one-click DNS setup:
 
 1. **Settings → Subdomains → New subdomain**, enter the hostname (or open the existing one).
 2. Add the records the dashboard shows at the DNS provider, all at once (**Copy all records** is
