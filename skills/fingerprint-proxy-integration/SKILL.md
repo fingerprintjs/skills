@@ -1,16 +1,18 @@
 ---
 name: fingerprint-proxy-integration
-description: Serve the Fingerprint JS Agent (v4) from your own domain — a first-party custom subdomain or a proxy integration (Cloudflare, CloudFront, Azure, Nginx) via the v4 `endpoints` option — so fraud-prevention identification on a site you operate stays accurate and consistent. Use after basic identification works, when identification is unreliable or short-lived in production.
+description: Serve the Fingerprint JS Agent (v4) from your own domain, Fingerprint's required production setup — a first-party custom subdomain (set up by the Fingerprint CLI wizard, `fingerprint integrate --subdomain`, the `fingerprint subdomains` commands, or the dashboard) or a proxy integration (Cloudflare, CloudFront, Azure Front Door, Akamai, Fastly), configured through the v4 `endpoints` option. Use after basic identification works, when identification is unreliable, short-lived or missing for some visitors in production.
 ---
 
 # Fingerprint — First-party deployment (custom subdomain / proxy)
 
-By default the JS Agent loads its script from, and sends requests to, Fingerprint's domain — a
-third-party context for your site. Browsers restrict third-party storage (Safari's ITP, Firefox's
-ETP, and storage partitioning generally), which shortens how long an identifier survives and makes
-identification less consistent. Serving the agent from **your own domain** puts it in the same
-first-party context as the rest of your app, which is Fingerprint's recommended production setup.
-In the dashboard this step is listed under *Protect against ad blockers*.
+Fingerprint's production setup serves the JS Agent from **your own domain**, through a custom
+subdomain or a proxy integration. The docs call this **required for correct identification**. By
+default the agent loads from, and sends requests to, Fingerprint's domain, a third-party context
+for your site. Browsers restrict third-party storage (Safari's ITP, Firefox's ETP, storage
+partitioning generally), so identification from that context is shorter-lived and inconsistent,
+and for some visitors it fails outright, which means no fraud check runs for them. Serving the
+agent first-party fixes this. In the dashboard this step is listed under *Protect against ad
+blockers*.
 
 ## Scope and consent
 This changes **where requests go**, not what you are allowed to collect. It is for a site you
@@ -30,20 +32,18 @@ operate, and it does not reduce any disclosure obligation you already have.
 > **This API changed in v4.** The old `scriptUrlPattern`, `endpoint` (singular), `tlsEndpoint`, and
 > `disableTls` options were **removed** and consolidated into a single **`endpoints`** option.
 > Docs: https://docs.fingerprint.com/docs/custom-subdomain-setup ·
-> API: https://docs.fingerprint.com/reference/subdomainscontroller_create.
+> https://docs.fingerprint.com/docs/protecting-the-javascript-agent-from-adblockers
 
-Choose a custom subdomain or a proxy integration, then point the existing SDK setup at it:
+## Pick one approach
 
-| Approach | Effort | Consistency | When |
+| Approach | Who runs it | Effort | Pick it when |
 | --- | --- | --- | --- |
-| **Custom subdomain** | Low — DNS records returned by Fingerprint | Good | Simplest setup; quick win |
-| **Proxy integration** | Higher — deploy a proxy | Best | You control the edge |
+| **Custom subdomain** | Fingerprint, behind DNS records on your domain | Low: three DNS records | Default. Any plan. The CLI sets it up. |
+| **Proxy integration** | You, at your edge (Cloudflare on any plan; CloudFront, Azure Front Door, Akamai, Fastly on Enterprise) | Higher: deploy and maintain a proxy | You need Safari cookie lifetime of one year instead of seven days, IPv6, unlimited subdomains and paths, or WAF/logging on identification traffic |
 
-Pick one. A custom subdomain is Fingerprint-managed DNS on your domain (this skill's
-[Custom subdomain](#custom-subdomain) section); a proxy integration is code you deploy at your edge
-([Proxy integration](#proxy-integration)). Never set up both for the same app. You can start with a
-subdomain and move to a proxy later — both change only **where the agent loads its script from**
-and the **`endpoints`** value, not your application logic.
+Never set up both for the same app. Both change only where the agent loads its script from and the
+`endpoints` value, not your application logic, so you can start with a subdomain and move to a
+proxy later.
 
 ## The v4 `endpoints` option
 - `endpoints` sets where the agent **sends identification requests**. It takes a single string
@@ -56,129 +56,160 @@ and the **`endpoints`** value, not your application logic.
     host. (Passing `endpoints` to the npm/SDK path appends `/web/` for you.)
   - **NPM / framework SDKs**: pass `endpoints` to the provider/start options (e.g. the
     `FingerprintProvider` `endpoints` prop). See `snippets/subdomain-options.js`.
+- If the site has a Content Security Policy, add the subdomain or proxy origin to `connect-src`.
 
 ## Custom subdomain
 
-Creating a subdomain does not make it usable. Only server status `active` permits setting
-`endpoints` or switching the script URL. DNS and certificate issuance take minutes to days, so a
-pending run ends with a clear next step, never a polling loop.
+A subdomain is usable only at server status `active`. Creating it, adding its DNS records, and
+even all records reading `validated` are not enough. Only `active` permits setting `endpoints` or
+switching the script URL. DNS and certificate issuance take minutes to hours (the docs allow up to
+24 hours), so a pending setup ends the run with a clear next step, never a polling loop.
 
-### Pick an executor
+### 1. Fastest path: the Fingerprint CLI does it
 
-Use the first one available. Authentication belongs to the executor: never ask for, read or pass a
-Management API key, and never fall back to direct HTTP calls.
+The `npx fingerprint` wizard offers this step once identification works. To start it directly, or
+to pick up a pending one where it stopped:
 
-1. Fingerprint subdomain tools, when they are exposed to you: inside the `fingerprint` CLI wizard,
-   or through the Fingerprint MCP server. Use only the operations actually exposed; being inside
-   the wizard or having the MCP connected does not guarantee they exist.
-2. A shell with the CLI available: run the wizard, `npx fingerprint integrate --subdomain <hostname>`.
-   It creates the subdomain, waits for DNS, and points the app at it. Only if you must drive it
-   yourself, the `fingerprint subdomains` commands (`list`, `get`, `create`, `verify`, `delete`, all
-   with `--json`) do the same operations as the tools.
-3. Neither: use the [Dashboard](#dashboard) below.
+```bash
+npx fingerprint integrate --subdomain metrics.yourdomain.com
+```
 
-| Operation | Tool |
+The CLI asks for the hostname (it never guesses one), looks it up in the workspace and creates it
+if missing, prints the DNS records, and offers **Check the DNS records now** (each check waits up
+to five minutes for propagation), **Show the DNS records again**, or **Finish later**. Once the
+subdomain is `active` it points the app at it: the agent edits the provider options, and the CLI
+writes the endpoint variable to the frontend's env file itself. A pending setup is remembered per
+project, and the next `fingerprint integrate` run offers to resume it. With `--ci` or `--yes` the
+CLI prints the records and the resume command and exits without prompting.
+
+**When you are the agent running inside the wizard**, you have four tools on the `fingerprint`
+server. The CLI holds the session, so you never see or ask for a Management API key.
+
+| Tool | Input | Returns |
+| --- | --- | --- |
+| `list_subdomains` | none | `subdomains[]`: `id`, `subdomain`, `status`, `created_at`, `updated_at` |
+| `get_subdomain` | `{ id }` | `subdomain` with `dns_records` |
+| `create_subdomain` | `{ hostname }` | the created `subdomain` with `dns_records` |
+| `verify_subdomain` | `{ id }` | runs one DNS check, then re-reads and returns the fresh `subdomain` |
+
+Follow the CLI's prompt: list first, create only the hostname the CLI named and only if it is not
+there, and while it is pending change no code and keep your report to a sentence or two. The CLI
+prints the records and the next step itself. Once active, reference the env variable the CLI
+names in the provider options and stop; the CLI writes it. There is no delete tool: deleting is a
+user decision made through the command below.
+
+### 2. Driving it yourself from a shell
+
+The same operations as commands, for an agent with a shell or a user at a terminal. Sign in once
+with `fingerprint login`; the CLI keeps a workspace-scoped key in the user's config directory and
+the commands read it. Every command accepts the hostname or the `certv2_…` id and `--json`.
+
+```bash
+fingerprint subdomains                                  # list, plus the available commands
+fingerprint subdomains create metrics.yourdomain.com    # register; prints the DNS records
+fingerprint subdomains list
+fingerprint subdomains get    metrics.yourdomain.com    # status + DNS records, no side effects
+fingerprint subdomains verify metrics.yourdomain.com    # one on-demand DNS check, then fresh status
+fingerprint subdomains delete metrics.yourdomain.com    # prompts; --yes required with --json or --ci
+```
+
+Errors come back as `{ kind, message }` (plus `violations` or `retry_after` when present). Surface
+them and stop; they are already actionable:
+
+| `kind` | Meaning |
 | --- | --- |
-| List | `list_subdomains` |
-| Read | `get_subdomain` `{ id }` |
-| Create | `create_subdomain` `{ hostname }` |
-| Verify | `verify_subdomain` `{ id }` |
-| Delete | `delete_subdomain` `{ id }` (only for a deletion the user approved) |
+| `not_authenticated` | run `fingerprint login` |
+| `invalid_subdomain` | the returned `violations` say what to change |
+| `duplicate` | the hostname exists; resolve it with `get` instead |
+| `not_found` / `ambiguous` | no match / several match; use `list` and pick by id |
+| `limit_reached` | 50 subdomains per workspace, 5 on a free trial |
+| `rate_limited` | the API allows one verify per minute; wait `retry_after` |
+| `confirmation_required` | `delete` needs `--yes` in `--json` or `--ci` runs |
+| `unavailable` / `api_error` | service unavailable or unexpected; report and stop |
 
-### Find or create the subdomain
+Never retry in a loop, never delete to make room, never ask the user to paste a key, and never
+call the Management API over raw HTTP from a skill run.
 
-- Start by listing the workspace's subdomains, never from conversation memory. Normalize the
-  hostname (trim, drop a trailing dot, lowercase) and match exactly. One match: read it by ID.
-  Several: show hostname, ID and status and ask. No hostname supplied: show the candidates and ask.
-- No match: confirm the exact hostname and the intent to create before creating. It must be an
-  unused subdomain of the same site the app runs on (e.g. `metrics.yourdomain.com` for
-  `yourdomain.com`), never the site's own hostname (its A records will point at Fingerprint), and a
-  subdomain of a different domain the user owns does not count as first-party. Constraints: no apex,
-  64 characters max, no `fingerprint` or
-  `fingerprintjs` in the FQDN, immutable once created, workspace limit typically 50 (5 on trial).
-- Read status and `dns_records` before continuing. `active` or terminal: skip to the status
-  branch. Only `pending` needs DNS work.
+### 3. Dashboard
 
-### Present the DNS records together
+When neither the wizard nor the CLI is available, the user does this in the dashboard and you do
+the code:
 
-Show every record in `dns_records`: `verification` (CNAME), `routing[]` (A) and `caa` when present,
-each with `type`, `host`, `value` and its own `status`. They are all added in one pass; the A
-records do not wait for the certificate. When some are already `validated`, name only the ones
-still pending.
+1. **Settings → Subdomains → New subdomain**, enter the hostname (or open the existing one).
+2. Add the records the dashboard shows at the DNS provider, all at once (**Copy all records** is
+   zone-file format). On Cloudflare DNS the dashboard offers **one-click setup** via Domain
+   Connect; either way the records must be **DNS only** (proxying off), and CNAME flattening off.
+3. **Check DNS records**, then wait for the status to read **Active**.
+4. Only then apply [How to apply](#how-to-apply-code-side). Ask the user to confirm **Active**
+   before editing.
 
-How the records get added depends on where you run. Inside the wizard, the CLI takes it from here:
-it shows the records and waits for them; report the status and stop. Otherwise the user adds them
-at their DNS provider, which may not be their web host; if you have an authorized DNS-provider
-tool, offer to apply exactly these records after the user approves. On Cloudflare DNS the records
-must be **DNS only** (proxying off).
+### Choosing the hostname
 
-Once the records are in, verify at most once per run, then read the resource again: the verify
-response can carry stale record statuses (the CLI command and the `verify_subdomain` tool already
-do this read for you).
+Confirm the exact hostname with the user before creating anything: subdomains are immutable, so
+changing one means deleting and recreating it. Constraints, enforced by the API:
+
+- A subdomain of the site the app runs on (e.g. `metrics.yourdomain.com` for `yourdomain.com`),
+  never the site's own hostname (its A records will point at Fingerprint) and never a subdomain
+  of some other domain the user owns: that is not first-party for this site.
+- A valid FQDN, at most 64 characters, not containing `fingerprint` (case-insensitive). The docs
+  also advise against `fp`. Use a neutral name such as `metrics`.
+- 50 per workspace, 5 on a free trial.
+
+### DNS records
+
+`dns_records` holds `verification` (one CNAME, proves ownership), `routing[]` (two A records,
+carry the traffic) and, when the domain has a conflicting CAA record, `caa`. Each has `type`,
+`host`, `value` and its own `status` (`pending_validation`, `validated`, `failed`). Show all of
+them together: they are added in one pass, and the A records do not wait for the certificate. The
+user adds them at their DNS provider, which may not be their web host; if you have an authorized
+DNS-provider tool, offer to apply exactly these records after the user approves.
 
 ### Branch on status
 
+Status comes from the server, never from elapsed time or from the records.
+
 | Status | Action |
 | --- | --- |
-| `pending` | Leave `endpoints` and code untouched. Name the unresolved records, or say certificate issuance is in progress when all are `validated`. End as waiting; no polling, no second verify. |
+| `pending` | Leave `endpoints` and code untouched. Name the records still `pending_validation`; when all are `validated`, say certificate issuance is in progress. End as waiting: no polling, no second verify. Report hostname, id, what is outstanding, and the resume command. |
 | `active` | Configure the endpoint (below). |
-| `timed_out` | Offer delete and recreate for the named hostname; both need explicit approval. Then present the new records. |
-| `failed` | Stop. Show hostname, ID and the returned details. |
+| `timed_out` | Records were not validated within 14 days. Offer to delete and recreate the same hostname; both need explicit approval. Then present the new records. |
+| `failed` | Records were found but the certificate cannot be issued, almost always a conflicting CAA record. Show the `caa` record to add; once it has propagated, delete and recreate. Both need approval. |
 
-Status comes from the server only, never from elapsed time or from the records; all records
-`validated` is not `active`. A pending run ends with hostname, ID, what is outstanding and how to
-resume: ask the agent to resume setup for the same hostname; `fingerprint subdomains get <hostname>`
-only checks its status. Get Started step 3 is not complete while waiting.
+Get Started step 3 stays open while the subdomain is anything but `active`.
 
 ### Configure only after `active`
 
-Follow [How to apply](#how-to-apply-code-side) with the framework's env convention. Inside the
-wizard, reference the env variable the CLI names and stop: the CLI writes it. Elsewhere, never read
-or print `.env`; if you cannot write the env file, give the user the exact variable and value. For
-a CDN install, switch the import URL and `endpoints` directly. Keep the public key and region as
-they are.
-
-### Errors
-
-Surface the executor's `kind` and `message` and stop; they are already actionable
-(`not_authenticated` → `fingerprint login`, `invalid_subdomain` → the returned violations,
-`duplicate` → resolve that hostname again, `limit_reached`, `rate_limited` → `retry_after`,
-`unavailable`). Never retry in a loop, never delete to make room, never ask the user to paste a key.
-
-### Dashboard
-
-When no executor is available, the user does it in the Fingerprint Dashboard and you do the code:
-
-1. **Settings → Subdomains → New subdomain**, enter the hostname (or open the existing one).
-2. Add the records the Dashboard shows at the DNS provider, all at once, or use its one-click
-   setup when offered. On Cloudflare, DNS only (proxying off).
-3. **Check DNS records**, then wait for the status to read **Active**. This can take minutes.
-4. Only then apply [How to apply](#how-to-apply-code-side). Ask the user to confirm **Active**
-   before editing; creating the subdomain or adding the records is not enough.
-
-`webhook_url` is for CI/CD with a public callback URL, not for a local agent session.
+Follow [How to apply](#how-to-apply-code-side). Inside the wizard, reference the env variable the
+CLI names and stop; the CLI writes it. Elsewhere, never read or print `.env`; if you cannot write
+the env file, give the user the exact variable and value. For a CDN install, switch the import URL
+and `endpoints` directly. Keep the public key and region as they are.
 
 ## Proxy integration
-1. Deploy one of Fingerprint's proxy integrations at your edge — **Cloudflare Worker**, **AWS
-   CloudFront + Lambda@Edge**, **Azure**, or **Nginx** — using the official integration package
-   for your platform. It forwards a path on your domain to the Fingerprint ingest API with your
-   proxy secret.
-2. Configure the **proxy secret** in the dashboard for that environment.
-3. Set `endpoints` to your proxy origin. Same code shape as the subdomain case — only the URL differs.
+1. Deploy one of Fingerprint's proxy integrations at your edge: **Cloudflare** (dashboard wizard,
+   any plan), **AWS CloudFront**, **Azure Front Door**, **Akamai**, **Fastly VCL** or **Fastly
+   Compute** (integration guides, Enterprise). It forwards a path on your domain to Fingerprint
+   with your proxy secret.
+2. Create the **proxy secret** (an API key of type `proxy`) in the dashboard and configure it in
+   the proxy.
+3. Set `endpoints` to your proxy origin. Same code shape as the subdomain case; only the URL
+   differs. Host the proxy on the same registrable domain as the site, and on the same cloud
+   provider where you can: Safari limits cookie lifetime when the site and proxy IP ranges differ.
 
 ## How to apply (code side)
 - The only code change is in the **provider/start options** where you already pass the public key
   and region: add `endpoints` pointing at your subdomain/proxy. See `snippets/subdomain-options.js`.
-- Keep the value in an env var (e.g. `FINGERPRINT_ENDPOINTS`) so dev/staging/prod can differ
-  without code edits.
+- Keep the value in an env var named `FINGERPRINT_ENDPOINTS` with the same client prefix the public
+  key uses (`NEXT_PUBLIC_`, `NUXT_PUBLIC_`, `VITE_`). That is the variable the CLI writes, so
+  dev/staging/prod can differ without code edits.
 - Region still must match the workspace region.
 - Verify in the browser devtools Network tab that agent requests now go to **your** domain and
   return 200.
 
 ## Best practices
 - Prefer the subdomain for a fast first step; move to a proxy when you want to own the edge.
-- Don't expose the proxy secret to the browser — it lives only in your edge proxy config.
+- Don't expose the proxy secret to the browser; it lives only in your edge proxy config.
 - If a request to your subdomain/proxy fails, the agent can fall back to Fingerprint's default
   endpoints; still handle identify errors so the flow degrades gracefully.
+- Deleting an `active` subdomain stops its traffic immediately; repoint the agent first.
 - Point the subdomain at your own infrastructure only. Don't route another party's traffic through
   it, and don't reuse it for anything beyond the identification described in your privacy notice.
