@@ -11,7 +11,7 @@ fetches that event from the Server API to read the verified identification and S
 browser never holds the secret key and never makes trust decisions — the server does, using the
 checks below.
 
-> Docs: React SDK https://docs.fingerprint.com/docs/react · Node Server SDK https://docs.fingerprint.com/reference/node-server-sdk · event schema: OpenAPI (https://github.com/fingerprintjs/fingerprint-pro-server-api-openapi) or the Fingerprint MCP event-schema resource.
+> Docs: React SDK https://docs.fingerprint.com/docs/react · Node Server SDK https://docs.fingerprint.com/reference/node-server-sdk · event schema: OpenAPI (https://github.com/fingerprintjs/openapi) or the Fingerprint MCP event-schema resource.
 
 ## Packages
 - `@fingerprint/react` — browser identification (client components). Install the latest version.

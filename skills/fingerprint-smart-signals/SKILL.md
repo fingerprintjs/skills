@@ -37,8 +37,8 @@ Each Smart Signal is a top-level field on the event. The web-relevant set:
 > Field availability depends on your plan and platform (web vs. mobile), so guard each access
 > (`event.vpn ?? false`) so a missing signal doesn't throw. Every field is specified in the v4
 > Server API reference: https://docs.fingerprint.com/reference/server-api-get-event (source:
-> https://github.com/fingerprintjs/fingerprint-pro-server-api-openapi, also served as the
-> Fingerprint MCP event-schema resource).
+> https://github.com/fingerprintjs/openapi, also served as the Fingerprint MCP event-schema
+> resource).
 
 ## Bot detection
 > Docs: https://docs.fingerprint.com/docs/bot-detection/overview (covers AI tools and traditional
