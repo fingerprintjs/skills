@@ -4,7 +4,7 @@
      The Svelte provider takes a single `options` prop (apiKey + region). -->
 <script>
   import { FingerprintProvider } from '@fingerprint/svelte'
-  import CreateAccountForm from './CreateAccountForm.svelte'
+  import Identify from './use-visitor-data.svelte'
 
   const options = {
     apiKey: import.meta.env.VITE_FINGERPRINT_PUBLIC_API_KEY,
@@ -13,5 +13,5 @@
 </script>
 
 <FingerprintProvider {options}>
-  <CreateAccountForm />
+  <Identify />
 </FingerprintProvider>
