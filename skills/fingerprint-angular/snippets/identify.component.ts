@@ -3,18 +3,22 @@ import { Component } from '@angular/core'
 import { FingerprintService } from '@fingerprint/angular'
 
 @Component({
-  selector: 'app-login',
+  selector: 'app-identify',
   template: '<!-- ...form whose submit calls onSubmit... -->',
 })
-export class LoginComponent {
+export class IdentifyComponent {
   constructor(private fingerprintService: FingerprintService) {}
 
   async onSubmit(): Promise<void> {
-    // getVisitorData() identifies on demand and returns { visitor_id, event_id }. Each call is a
-    // billable identification event, so call it on the action you care about.
-    // It rejects when the agent is blocked, offline or times out — don't block the UI on it.
-    const { visitor_id, event_id } = await this.fingerprintService.getVisitorData()
-    console.log('visitor_id:', visitor_id, 'event_id:', event_id)
+    try {
+      // getVisitorData() identifies on demand and returns { visitor_id, event_id }. Each call is a
+      // billable identification event, so call it on the action you care about.
+      const { visitor_id, event_id } = await this.fingerprintService.getVisitorData()
+      console.log('visitor_id:', visitor_id, 'event_id:', event_id)
+    } catch (error) {
+      // Ad blockers, offline, timeouts. Don't block the UI on identification; let the action continue.
+      console.warn('Fingerprint failed:', error)
+    }
 
     // Identification alone is a hint, not a trust decision: anything from the browser can be
     // forged. If this app has a backend, that is where the single-use `event_id` goes — send it
