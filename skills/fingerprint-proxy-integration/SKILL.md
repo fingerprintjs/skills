@@ -86,8 +86,8 @@ if the user prefers, it prints the records and offers **Check the DNS records no
 waits up to five minutes for propagation), **Show the DNS records again**, or **Finish later**.
 Once the subdomain is `active`, the CLI asks whether to update the app. The agent edits the provider
 options, and the CLI writes the endpoint variable to the frontend's env file itself. Unfinished
-setup is remembered per project, including an active subdomain whose app update was declined or
-incomplete; the next `fingerprint integrate` run offers to resume it. With `--ci` or `--yes` the
+setup is remembered per project, including an active subdomain whose app update was declined;
+the next `fingerprint integrate` run offers to resume it. With `--ci` or `--yes` the
 CLI skips confirmation and exits with the records and resume command if the subdomain is pending.
 
 **When you are the agent running inside the wizard**, follow the CLI's prompt. If it supplies a
