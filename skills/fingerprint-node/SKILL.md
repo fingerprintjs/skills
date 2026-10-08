@@ -33,7 +33,8 @@ from the client.
    - otherwise (CommonJS) → `snippets/client.js`.
 
 3. **Fetch and check the event.** Given the `event_id`, call `client.getEvent(eventId)` and apply
-   the checks below before trusting the action. See `snippets/verify.js`.
+   the checks below before trusting the action. See `snippets/verify.mjs` for ESM or
+   `snippets/verify.js` for CommonJS, matching the client snippet from step 2.
 
 ## v4 event shape (flat — per the Server API event schema)
 `getEvent` returns the event object directly:
