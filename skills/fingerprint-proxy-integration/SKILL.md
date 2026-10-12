@@ -80,28 +80,22 @@ npx fingerprint integrate --subdomain metrics.yourdomain.com
 ```
 
 The CLI asks for the hostname (it never guesses one), looks it up in the workspace and creates it
-if missing, prints the DNS records, and offers **Check the DNS records now** (each check waits up
-to five minutes for propagation), **Show the DNS records again**, or **Finish later**. Once the
-subdomain is `active` it points the app at it: the agent edits the provider options, and the CLI
-writes the endpoint variable to the frontend's env file itself. A pending setup is remembered per
-project, and the next `fingerprint integrate` run offers to resume it. With `--ci` or `--yes` the
-CLI prints the records and the resume command and exits without prompting.
+if missing. When the domain's DNS provider supports Domain Connect (Cloudflare today), it offers
+to open the provider in the browser and let it add the records with one approval; otherwise, or
+if the user prefers, it prints the records and offers **Check the DNS records now** (each check
+waits up to five minutes for propagation), **Show the DNS records again**, or **Finish later**.
+Once the subdomain is `active`, the CLI asks whether to update the app. The agent edits the provider
+options, and the CLI writes the endpoint variable to the frontend's env file itself. Unfinished
+setup is remembered per project, including an active subdomain whose app update was declined;
+the next `fingerprint integrate` run offers to resume it. With `--ci` or `--yes` the
+CLI skips confirmation and exits with the records and resume command if the subdomain is pending.
 
-**When you are the agent running inside the wizard**, you have four tools on the `fingerprint`
-server. The CLI holds the session, so you never see or ask for a Management API key.
-
-| Tool | Input | Returns |
-| --- | --- | --- |
-| `list_subdomains` | none | `subdomains[]`: `id`, `subdomain`, `status`, `created_at`, `updated_at` |
-| `get_subdomain` | `{ id }` | `subdomain` with `dns_records` |
-| `create_subdomain` | `{ hostname }` | the created `subdomain` with `dns_records` |
-| `verify_subdomain` | `{ id }` | runs one DNS check, then re-reads and returns the fresh `subdomain` |
-
-Follow the CLI's prompt: list first, create only the hostname the CLI named and only if it is not
-there, and while it is pending change no code and keep your report to a sentence or two. The CLI
-prints the records and the next step itself. Once active, reference the env variable the CLI
-names in the provider options and stop; the CLI writes it. There is no delete tool: deleting is a
-user decision made through the command below or in the dashboard.
+**When you are the agent running inside the wizard**, follow the CLI's prompt. If it supplies a
+hostname verified as `active`, skip resource creation, DNS and verification: only update the
+application's integration. Reference the endpoint variable the CLI names in the provider/start
+options; the CLI writes it. If no variable is supplied, use the endpoint directly. Never ask for
+a Management API key, read `.env`, or start another CLI flow. A comment or an unused variable
+does not configure the app — update the options used by the existing integration.
 
 ### The `fingerprint subdomains` commands
 
@@ -115,6 +109,7 @@ fingerprint subdomains create metrics.yourdomain.com    # register; prints the D
 fingerprint subdomains list
 fingerprint subdomains get    metrics.yourdomain.com    # status + DNS records, no side effects
 fingerprint subdomains verify metrics.yourdomain.com    # one on-demand DNS check, then fresh status
+fingerprint subdomains connect metrics.yourdomain.com   # Domain Connect: the provider adds the records, then verify
 fingerprint subdomains delete metrics.yourdomain.com    # prompts; --yes required with --json or --ci
 ```
 
@@ -130,6 +125,8 @@ them and stop; they are already actionable:
 | `limit_reached` | 50 subdomains per workspace, 5 on a free trial |
 | `rate_limited` | the API allows one verify per minute; wait `retry_after` |
 | `confirmation_required` | `delete` needs `--yes` in `--json` or `--ci` runs |
+| `unsupported` | no Domain Connect for this provider, or the subdomain is no longer pending; add the records by hand |
+| `declined` / `timeout` | the user did not approve at the provider, or did not come back in time; the records are still to be added |
 | `unavailable` / `api_error` | service unavailable or unexpected; report and stop |
 
 Never retry in a loop, never delete to make room, never ask the user to paste a key, and never
@@ -137,8 +134,7 @@ call the Management API over raw HTTP from a skill run.
 
 ### The dashboard
 
-The user registers the subdomain and adds the records themselves, and you do the code. This is
-the only path with one-click DNS setup:
+The user registers the subdomain and adds the records themselves, and you do the code:
 
 1. **Settings → Subdomains → New subdomain**, enter the hostname (or open the existing one).
 2. Add the records the dashboard shows at the DNS provider, all at once (**Copy all records** is
