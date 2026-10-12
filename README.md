@@ -30,7 +30,7 @@ These skills work with any agent that supports the [Agent Skills](https://www.an
 
 ### Claude Code
 
-**Terminal (CLI):** run the [`claude`](https://code.claude.com) CLI, then install using the [plugin marketplace](https://code.claude.com/docs/en/discover-plugins#add-from-github):
+**Terminal (CLI):** run the [`claude`](https://code.claude.com) CLI, then install using the [plugin marketplace](https://code.claude.com/docs/en/discover-plugins#add-a-marketplace):
 
 ```
 /plugin marketplace add fingerprintjs/skills
