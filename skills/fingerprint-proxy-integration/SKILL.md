@@ -72,19 +72,23 @@ than creating another. An MCP connection does not imply a CLI login or that ever
 ### The Fingerprint MCP
 
 Use the subdomain tools directly when they are in your tool list; otherwise `list_tools` names
-the route (`call_tool` for reads, `call_write_tool` for create and verify, which need the user's
-approval either way). If a tool is unavailable, use the CLI when there is a shell, or the dashboard.
-Never ask for a Management API key: the MCP is already authenticated.
+the route (`call_tool` for reads, `call_write_tool` for create, connect and verify, which need the
+user's approval either way). If a tool is unavailable, use the CLI when there is a shell, or the
+dashboard. Never ask for a Management API key: the MCP is already authenticated.
 
 - List before creating: `list_subdomains` is paginated, follow `next_cursor` to find the exact
-  hostname. `get_subdomain` and `verify_subdomain` take an `id` or a `hostname`.
-- Present the records as in [DNS records](#dns-records). A DNS-provider tool the user has
-  authorized can add them; otherwise the user adds them. On Cloudflare, DNS only (proxying off).
+  hostname. `get_subdomain`, `connect_subdomain` and `verify_subdomain` take an `id` or a `hostname`.
+- Adding the records, in this order: try `connect_subdomain` first. It returns a Domain Connect
+  link; give it to the user to open in their browser, where they approve the records at their DNS
+  provider and land on the Fingerprint dashboard. Wait for them to say they are back, then verify.
+  A 409 means the provider has no Domain Connect or the subdomain is no longer pending: present the
+  records as in [DNS records](#dns-records) instead, for the user or an authorized DNS-provider
+  tool to add. On Cloudflare, DNS only (proxying off).
 - Verify once after DNS changes, then `get_subdomain` for status. On 429 respect
   `error.retry_after`; on 422 show `error.violations`. Pending is not a failure: report hostname,
   id and what remains, and stop. Only `active` permits app changes ([Branch on status](#branch-on-status)).
 
-The MCP does not expose deletion or Domain Connect; for those use the CLI or the dashboard.
+The MCP does not expose deletion; for that use the CLI or the dashboard.
 
 ### The CLI wizard
 
