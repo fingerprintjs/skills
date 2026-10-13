@@ -65,10 +65,26 @@ even all records reading `validated` are not enough. Only `active` permits setti
 switching the script URL. DNS and certificate issuance take minutes to hours (the docs allow up to
 24 hours), so a pending setup ends the run with a clear next step, never a polling loop.
 
-There are three equal ways to register the subdomain and get its DNS records. They all create the
-same resource in the same workspace, so a subdomain started in one place can be finished in
-another: the CLI wizard, the `fingerprint subdomains` commands, or the dashboard. Use whichever
-the user is already in; if they have created one in the dashboard, do not create another.
+Use the available Fingerprint MCP tools, the CLI wizard, the `fingerprint subdomains` commands,
+or the dashboard. They manage the same workspace resources: reuse an existing subdomain rather
+than creating another. An MCP connection does not imply a CLI login or that every tool is enabled.
+
+### The Fingerprint MCP
+
+Use the subdomain tools directly when they are in your tool list; otherwise `list_tools` names
+the route (`call_tool` for reads, `call_write_tool` for create and verify, which need the user's
+approval either way). If a tool is unavailable, use the CLI when there is a shell, or the dashboard.
+Never ask for a Management API key: the MCP is already authenticated.
+
+- List before creating: `list_subdomains` is paginated, follow `next_cursor` to find the exact
+  hostname. `get_subdomain` and `verify_subdomain` take an `id` or a `hostname`.
+- Present the records as in [DNS records](#dns-records). A DNS-provider tool the user has
+  authorized can add them; otherwise the user adds them. On Cloudflare, DNS only (proxying off).
+- Verify once after DNS changes, then `get_subdomain` for status. On 429 respect
+  `error.retry_after`; on 422 show `error.violations`. Pending is not a failure: report hostname,
+  id and what remains, and stop. Only `active` permits app changes ([Branch on status](#branch-on-status)).
+
+The MCP does not expose deletion or Domain Connect; for those use the CLI or the dashboard.
 
 ### The CLI wizard
 
