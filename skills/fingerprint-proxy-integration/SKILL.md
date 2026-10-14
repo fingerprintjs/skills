@@ -38,7 +38,7 @@ operate, and it does not reduce any disclosure obligation you already have.
 
 | Approach | Who runs it | Effort | Pick it when |
 | --- | --- | --- | --- |
-| **Custom subdomain** | Fingerprint, behind DNS records on your domain | Low: three DNS records | Default. Any plan. Set up from the CLI or the dashboard. |
+| **Custom subdomain** | Fingerprint, behind DNS records on your domain | Low: add the returned DNS records | Default. Any plan. Set up from the CLI or the dashboard. |
 | **Proxy integration** | You, at your edge (Cloudflare on any plan; CloudFront, Azure Front Door, Akamai, Fastly on Enterprise) | Higher: deploy and maintain a proxy | You need Safari cookie lifetime of one year instead of seven days, IPv6, unlimited subdomains and paths, or WAF/logging on identification traffic |
 
 Never set up both for the same app. Both change only where the agent loads its script from and the
@@ -178,10 +178,11 @@ changing one means deleting and recreating it. Constraints, enforced by the API:
 
 ### DNS records
 
-`dns_records` holds `verification` (one CNAME, proves ownership), `routing[]` (two A records,
-carry the traffic) and, when the domain has a conflicting CAA record, `caa`. Each has `type`,
-`host`, `value` and its own `status` (`pending_validation`, `validated`, `failed`). Show all of
-them together: they are added in one pass, and the A records do not wait for the certificate. The
+`dns_records` holds `routing[]` (two A records) and, when needed, `caa`. New subdomains use HTTP
+certificate validation: `verification` is a validated placeholder with empty `host` and `value`;
+do not display or add it. Older subdomains can still return a real verification CNAME: keep it.
+Each record has `type`, `host`, `value` and its own `status` (`pending_validation`, `validated`,
+`failed`). Show the real records together: the A records do not wait for the certificate. The
 user adds them at their DNS provider, which may not be their web host; if you have an authorized
 DNS-provider tool, offer to apply exactly these records after the user approves.
 
@@ -193,6 +194,7 @@ Status comes from the server, never from elapsed time or from the records.
 | --- | --- |
 | `pending` | Leave `endpoints` and code untouched. Name the records still `pending_validation`; when all are `validated`, say certificate issuance is in progress. End as waiting: no polling, no second verify. Report hostname, id, what is outstanding, and the resume command. |
 | `active` | Configure the endpoint (below). |
+| `expired` | The certificate has expired. Do not wait for DNS or configure the app. Offer to delete and recreate the subdomain; both need explicit approval. |
 | `timed_out` | Records were not validated within 14 days. Offer to delete and recreate the same hostname; both need explicit approval. Then present the new records. |
 | `failed` | Records were found but the certificate cannot be issued, almost always a conflicting CAA record. Show the `caa` record to add; once it has propagated, delete and recreate. Both need approval. |
 
