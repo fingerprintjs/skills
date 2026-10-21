@@ -51,14 +51,18 @@ from the client.
 - **Found:** `event.identification.visitor_id` exists.
 - **Replay / freshness:** reject if `event.replayed` is `True`, or if `event.timestamp` is older
   than your window (e.g. 2 minutes) — prevents reuse of an old `event_id`.
-- **Confidence:** require `event.identification.confidence.score >= 0.9` for the action.
-- **Smart Signals** (fail-closed for high-risk actions): `event.bot != BotResult.NOT_DETECTED`,
-  `event.vpn`, `event.proxy`, `event.tampering`. Blocking every bot is
-  right here and wrong on a crawlable route, where it takes out search-engine crawlers too.
+- **Confidence and Smart Signals — observe first:** flag
+  `event.identification.confidence.score < 0.9`, `event.bot != BotResult.NOT_DETECTED`, `event.vpn`,
+  `event.proxy`, `event.tampering`, but let the action through and log what fired (e.g.
+  `[fingerprint] allowed despite: anonymizing_network`). Blocking on these during setup locks the
+  developer out of their own app (a VPN, dev tools, a headless test). Enforce them behind one switch
+  (`ENFORCE_SIGNALS`) once the logs look right for real traffic. Blocking every bot is right for a
+  login or checkout and wrong on a crawlable route, where it takes out search-engine crawlers too.
 - **Identity match:** bind `visitor_id` ↔ user on first trusted use; re-check on later actions.
 
 ## Notes
 - Fetch and check server-side on **every** sensitive action.
 - Fail closed on lookup errors for high-risk flows.
+- Log the reason whenever a check rejects, so a blocked request is never a silent 403.
 - Each `event_id` is single-use per action — don't cache a pass/fail across requests.
 - Keep the secret key out of logs and any client bundle.

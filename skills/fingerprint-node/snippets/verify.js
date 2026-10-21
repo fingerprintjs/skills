@@ -3,6 +3,7 @@ const { fingerprint } = require('./client')
 
 const MAX_AGE_MS = 2 * 60 * 1000 // reject identifications older than 2 minutes (replay protection)
 const MIN_CONFIDENCE = 0.9 // minimum identification confidence to trust the action
+const ENFORCE_SIGNALS = false // log-only at first; set true once the warnings look right for your traffic
 
 async function verifyEvent(eventId) {
   if (!eventId) return { ok: false, reason: 'missing_event_id' }
@@ -21,21 +22,27 @@ async function verifyEvent(eventId) {
   if (event.replayed) return { ok: false, reason: 'replayed' }
   if (Date.now() - event.timestamp > MAX_AGE_MS) return { ok: false, reason: 'stale' }
 
-  // Identification confidence
-  if ((id.confidence?.score ?? 0) < MIN_CONFIDENCE) return { ok: false, reason: 'low_confidence' }
+  // Identification confidence and Smart Signals
+  const flags = []
+  if ((id.confidence?.score ?? 0) < MIN_CONFIDENCE) flags.push('low_confidence')
+  if (event.bot && event.bot !== 'not_detected') flags.push('bot')
+  if (event.vpn || event.proxy) flags.push('anonymizing_network')
+  if (event.tampering) flags.push('tampering')
+  if (flags.length) {
+    if (ENFORCE_SIGNALS) return { ok: false, reason: flags.join(',') }
+    console.warn(`[fingerprint] allowed despite: ${flags.join(', ')} (visitor ${id.visitor_id})`)
+  }
 
-  // Smart signals (fail closed for high-risk actions)
-  if (event.bot && event.bot !== 'not_detected') return { ok: false, reason: 'bot' }
-  if (event.vpn || event.proxy) return { ok: false, reason: 'anonymizing_network' }
-  if (event.tampering) return { ok: false, reason: 'tampering' }
-
-  return { ok: true, visitorId: id.visitor_id }
+  return { ok: true, visitorId: id.visitor_id, flags }
 }
 
 // Express usage:
 //   app.post('/api/login', async (req, res) => {
 //     const check = await verifyEvent(req.body.eventId)
-//     if (!check.ok) return res.status(403).json({ error: 'blocked', reason: check.reason })
+//     if (!check.ok) {
+//       console.warn(`[fingerprint] blocked: ${check.reason}`)
+//       return res.status(403).json({ error: 'blocked', reason: check.reason })
+//     }
 //     // ...proceed; bind check.visitorId to the account...
 //   })
 

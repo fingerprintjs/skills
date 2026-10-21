@@ -106,6 +106,9 @@ event where a bot was detected, absent otherwise.
   `fingerprint-rules-engine`.
 
 ## How to apply
+0. **Observe before you enforce.** Start the policy in log-only mode — let the action through and
+   log which signals fired — and switch to blocking once the logs look right for real traffic. A
+   policy that blocks from day one locks the developer out of their own app (a VPN, dev tools).
 1. **Don't gate on a single signal.** Combine them into a per-action policy: e.g. block on
    `bot_info.identity === "spoofed"`, `bot === "bad"` or `tampering`, step-up auth on
    `vpn || proxy || ip_blocklist`, and log `suspect_score` for analytics.

@@ -18,9 +18,10 @@ const fingerprint = new FingerprintServerApiClient({
 
 const MAX_AGE_MS = 2 * 60 * 1000 // reject identifications older than 2 minutes (replay protection)
 const MIN_CONFIDENCE = 0.9 // minimum identification confidence to trust the action
+const ENFORCE_SIGNALS = false // log-only at first; set true once the warnings look right for your traffic
 
 export type VerifyResult =
-  | { ok: true; visitorId: string }
+  | { ok: true; visitorId: string; flags: string[] }
   | { ok: false; reason: string }
 
 export async function verifyEvent(eventId?: string): Promise<VerifyResult> {
@@ -40,18 +41,21 @@ export async function verifyEvent(eventId?: string): Promise<VerifyResult> {
   if (event.replayed) return { ok: false, reason: 'replayed' }
   if (Date.now() - event.timestamp > MAX_AGE_MS) return { ok: false, reason: 'stale' }
 
-  // Identification confidence
-  if ((id.confidence?.score ?? 0) < MIN_CONFIDENCE) return { ok: false, reason: 'low_confidence' }
-
-  // Smart signals (fail closed for high-risk actions)
+  // Identification confidence and Smart Signals
   // Blocking every bot is right for a login or checkout; on a crawlable route it takes out search
   // crawlers too — see the fingerprint-smart-signals skill.
+  const flags: string[] = []
+  if ((id.confidence?.score ?? 0) < MIN_CONFIDENCE) flags.push('low_confidence')
   if (event.bot && event.bot !== 'not_detected') {
     const bot = [event.bot_info?.category ?? event.bot, event.bot_info?.name].filter(Boolean)
-    return { ok: false, reason: `bot:${bot.join(':')}` }
+    flags.push(`bot:${bot.join(':')}`)
   }
-  if (event.vpn || event.proxy) return { ok: false, reason: 'anonymizing_network' }
-  if (event.tampering) return { ok: false, reason: 'tampering' }
+  if (event.vpn || event.proxy) flags.push('anonymizing_network')
+  if (event.tampering) flags.push('tampering')
+  if (flags.length) {
+    if (ENFORCE_SIGNALS) return { ok: false, reason: flags.join(',') }
+    console.warn(`[fingerprint] allowed despite: ${flags.join(', ')} (visitor ${id.visitor_id})`)
+  }
 
-  return { ok: true, visitorId: id.visitor_id }
+  return { ok: true, visitorId: id.visitor_id, flags }
 }

@@ -7,6 +7,7 @@ import { verifyEvent } from '@/lib/fingerprint-server'
 export async function login(formData: FormData, eventId: string) {
   const check = await verifyEvent(eventId)
   if (!check.ok) {
+    console.warn(`[fingerprint] blocked: ${check.reason}`)
     return { ok: false as const, reason: check.reason }
   }
 

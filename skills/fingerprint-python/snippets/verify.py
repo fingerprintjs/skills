@@ -1,12 +1,16 @@
 # Server-side verification of an event_id sent by the frontend. Returns a trust decision.
+import logging
 import time
 
 from fingerprint_server_sdk import BotResult
 
 from .client import client
 
+log = logging.getLogger("fingerprint")
+
 MAX_AGE_MS = 2 * 60 * 1000  # reject identifications older than 2 minutes (replay protection)
 MIN_CONFIDENCE = 0.9  # minimum identification confidence to trust the action
+ENFORCE_SIGNALS = False  # log-only at first; set True once the warnings look right for your traffic
 
 
 def verify_event(event_id):
@@ -28,19 +32,22 @@ def verify_event(event_id):
     if time.time() * 1000 - event.timestamp > MAX_AGE_MS:
         return {"ok": False, "reason": "stale"}
 
-    # Identification confidence
+    # Identification confidence and Smart Signals
+    flags = []
     if (ident.confidence.score if ident.confidence else 0) < MIN_CONFIDENCE:
-        return {"ok": False, "reason": "low_confidence"}
-
-    # Smart signals (fail closed for high-risk actions)
+        flags.append("low_confidence")
     if event.bot and event.bot != BotResult.NOT_DETECTED:
-        return {"ok": False, "reason": "bot"}
+        flags.append("bot")
     if event.vpn or event.proxy:
-        return {"ok": False, "reason": "anonymizing_network"}
+        flags.append("anonymizing_network")
     if event.tampering:
-        return {"ok": False, "reason": "tampering"}
+        flags.append("tampering")
+    if flags:
+        if ENFORCE_SIGNALS:
+            return {"ok": False, "reason": ",".join(flags)}
+        log.warning("allowed despite: %s (visitor %s)", ", ".join(flags), ident.visitor_id)
 
-    return {"ok": True, "visitor_id": ident.visitor_id}
+    return {"ok": True, "visitor_id": ident.visitor_id, "flags": flags}
 
 
 # FastAPI usage:
@@ -48,6 +55,7 @@ def verify_event(event_id):
 #   async def login(req: LoginRequest):
 #       check = verify_event(req.event_id)
 #       if not check["ok"]:
+#           log.warning("blocked: %s", check["reason"])
 #           raise HTTPException(status_code=403, detail={"error": "blocked", "reason": check["reason"]})
 #       # ...proceed; bind check["visitor_id"] to the account...
 #
@@ -56,5 +64,6 @@ def verify_event(event_id):
 #   def login():
 #       check = verify_event(request.json.get("event_id"))
 #       if not check["ok"]:
+#           log.warning("blocked: %s", check["reason"])
 #           return {"error": "blocked", "reason": check["reason"]}, 403
 #       # ...proceed; bind check["visitor_id"] to the account...

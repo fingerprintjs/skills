@@ -6,6 +6,7 @@ export async function POST(request: Request) {
 
   const check = await verifyEvent(eventId)
   if (!check.ok) {
+    console.warn(`[fingerprint] blocked: ${check.reason}`)
     return Response.json({ error: 'blocked', reason: check.reason }, { status: 403 })
   }
 
