@@ -1,15 +1,12 @@
-// app/api/login/route.ts — verify the event_id before running the sensitive handler.
+// app/api/login/route.ts — look up the event_id, run the handler as before, return the signals.
 import { verifyEvent } from '@/lib/fingerprint-server'
 
 export async function POST(request: Request) {
   const { username, password, eventId } = await request.json()
 
-  const check = await verifyEvent(eventId)
-  if (!check.ok) {
-    console.warn(`[fingerprint] blocked: ${check.reason}`)
-    return Response.json({ error: 'blocked', reason: check.reason }, { status: 403 })
-  }
+  const fingerprint = await verifyEvent(eventId)
+  console.log('[fingerprint]', fingerprint)
 
-  // ...proceed; bind check.visitorId to the account, then run login...
-  return Response.json({ ok: true })
+  // ...run login as before...
+  return Response.json({ ok: true, fingerprint })
 }

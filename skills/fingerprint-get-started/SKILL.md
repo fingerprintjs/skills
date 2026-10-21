@@ -72,7 +72,7 @@ Map detected frameworks to skills:
 2. **Access detailed insights (backend / Server API)** — verify the event server-side and read
    Smart Signals.
    → Apply the matching backend skill: `fingerprint-node` / `fingerprint-python` for the
-   verification flow, then `fingerprint-smart-signals` to act on the full signal set.
+   verification flow, then `fingerprint-smart-signals` to read the full signal set.
    *Done when the server calls `getEvent` and reads signals.*
 
    > **Strongly recommended for security-sensitive actions** (login, signup, checkout): the client

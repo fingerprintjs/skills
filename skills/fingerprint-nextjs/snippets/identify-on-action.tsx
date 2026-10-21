@@ -12,11 +12,15 @@ export function LoginForm() {
     const { event_id } = await getData()
 
     // Send the event_id (single-use, server-verifiable) — not the visitor_id.
-    await fetch('/api/login', {
+    const res = await fetch('/api/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, password, eventId: event_id }),
     })
+
+    // What the Server API saw for this visitor — so the developer learns their own traffic's signals.
+    const { fingerprint } = await res.json()
+    console.log('[fingerprint]', fingerprint)
   }
 
   return /* ...form... */ null

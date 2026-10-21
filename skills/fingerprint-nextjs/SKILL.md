@@ -8,8 +8,7 @@ description: Add Fingerprint to a fullstack Next.js (App Router) app — identif
 Integrate Fingerprint into a Next.js (App Router) app. Next.js does both halves in one codebase:
 the **client identifies** the visitor (producing a single-use `event_id`) and the **server**
 fetches that event from the Server API to read the verified identification and Smart Signals. The
-browser never holds the secret key and never makes trust decisions — the server does, using the
-checks below.
+browser never holds the secret key; the server reads the verified signals and hands them back.
 
 > Docs: React SDK https://docs.fingerprint.com/docs/react · Node Server SDK https://docs.fingerprint.com/reference/node-server-sdk · event schema: OpenAPI (https://github.com/fingerprintjs/openapi) or the Fingerprint MCP event-schema resource.
 
@@ -57,22 +56,18 @@ stays server-only.
    `Region.AP`, mapped from `FINGERPRINT_REGION`). Next.js loads `.env.local` automatically, so no
    `dotenv` is needed. See `snippets/fingerprint-server.ts`.
 
-7. **Verify the `event_id`** before running the sensitive handler: call `client.getEvent(eventId)`
-   and apply the checks below. Use it from either a Route Handler (`app/api/.../route.ts`) or a
+7. **Look up the `event_id`** in the sensitive handler: call `client.getEvent(eventId)` and handle
+   it as below. Use it from either a Route Handler (`app/api/.../route.ts`) or a
    Server Action (`'use server'`). See `snippets/route-handler.ts` and `snippets/server-action.ts`.
 
-## Verification checks (do all of them)
-- **Found:** `event.identification.visitor_id` exists.
-- **Replay / freshness:** reject if `event.replayed === true`, or if `event.timestamp` is older than
-  your window (e.g. 2 minutes) — prevents reuse of an old `event_id`.
-- **Confidence and Smart Signals — observe first:** flag
-  `event.identification.confidence.score < 0.9`, `event.bot !== "not_detected"`, `event.vpn`,
-  `event.proxy`, `event.tampering`, but let the action through and log what fired (e.g.
-  `[fingerprint] allowed despite: anonymizing_network`). Blocking on these during setup locks the
-  developer out of their own app (a VPN, dev tools, a headless test). Enforce them behind one switch
-  (`ENFORCE_SIGNALS`) once the logs look right for real traffic. Blocking every bot is right for a
-  login or checkout and wrong on a crawlable route, where it takes out search-engine crawlers too.
-- **Identity match:** bind `visitor_id` ↔ user on first trusted use; re-check on later actions.
+## What to do with the event
+- **Don't reject anything.** Run the action exactly as before, return what the Server API reported
+  (visitor id, confidence, replayed, bot, VPN/proxy, tampering, incognito, suspect score) in the
+  response, and log it on the frontend so the developer sees which signals their own
+  traffic produces. Which signals should stop an action depends on the use case and is covered by
+  the use-case skills, not this one.
+- **Before production,** consider dropping the signals from the response — they tell the client
+  what was detected.
 
 ## v4 event shape (flat — per the Server API event schema)
 `getEvent` returns the event object directly:
@@ -93,8 +88,7 @@ stays server-only.
 - One `FingerprintProvider` at the app root; don't re-instantiate per component.
 - Region must match the workspace region on **both** sides (`us` | `eu` | `ap`).
 - Don't block the UI on identification; handle the hook's `isLoading`/error states.
-- Verify server-side on **every** sensitive action; treat the client result as a hint only.
-- Fail closed on lookup errors for high-risk flows.
-- Log the reason whenever a check rejects, so a blocked request is never a silent 403.
-- Each `event_id` is single-use per action — don't cache a pass/fail across requests.
+- Look up server-side on **every** sensitive action; treat the client result as a hint only.
+- A lookup error comes back as `{ error: 'lookup_failed' }` — usually a wrong secret key or region.
+- Each `event_id` is single-use per action — don't cache the result across requests.
 - Keep the secret key out of logs and out of any `NEXT_PUBLIC_` var or client component.
