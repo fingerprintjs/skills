@@ -66,6 +66,9 @@ const devices = deviceBinding(store, { mode: 'step-up' })          // takeover
 const d = await devices.check(accountId, visitorId, { riskSignals: softRisk(event) })
 // d.outcome: 'allow' | 'step_up' | 'block'; call devices.bind(accountId, visitorId) after step-up succeeds
 ```
+`store` is `list`, `upsert` and `remove` over your database; the snippet includes a SQLite
+implementation. Wire it to whatever the app already persists with, and never add a database
+dependency for it (`memoryStore` is fine to start).
 
 ## Notes
 - Bind only after a trusted login (password **and** step-up, where one was required). Binding on

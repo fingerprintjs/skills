@@ -60,6 +60,9 @@ await store.insert('listings', { ...listing, visitorId })
 // moderator:  await records.ban(visitorId, 'spam listings')
 // dispute:    const related = await records.related('purchases', { visitorId, email })
 ```
+`store` is `find`, `findOr` and `insert` over your database; the snippet includes a SQLite
+implementation. Wire it to whatever the app already persists with, and never add a database
+dependency for it (`memoryStore` is fine to start).
 
 ## Notes
 - Store the `visitorId` from `getEvent`, never one the browser sent; a stored client value is

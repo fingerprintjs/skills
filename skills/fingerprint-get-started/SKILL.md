@@ -103,6 +103,13 @@ When the user names an outcome rather than a step, route it here once steps 1–
 Every scenario starts at `fingerprint-protect-action` (the bot + Suspect Score gate); add the
 second skill only when the scenario needs state of your own or a signal beyond those two.
 
+When a use-case skill is already installed under `.claude/skills/` (the CLI installs the ones the
+user picked, and names the use case in its prompt), read it **before every step, including
+step 1**: it says which action to identify on (a login submit, not page load), what to pass as
+`linkedId` and `tag`, and what the server check does with the event. Apply its tutorial defaults
+and nothing stricter — say which outcome (block, step-up, degrade, log) the code starts in and
+where to change it, rather than enabling enforcement the user has not asked for.
+
 | User mentions | Skill | Add |
 | --- | --- | --- |
 | Block bots, Suspect Score, protect my login / checkout / form | `fingerprint-protect-action` | — |

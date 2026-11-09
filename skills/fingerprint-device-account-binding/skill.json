@@ -5,5 +5,21 @@
   "category": "use-case",
   "frameworks": [],
   "packages": [],
-  "envVars": ["FINGERPRINT_SECRET_API_KEY", "FINGERPRINT_REGION"]
+  "envVars": ["FINGERPRINT_SECRET_API_KEY", "FINGERPRINT_REGION"],
+  "useCases": [
+    {
+      "id": "account-takeover",
+      "title": "Account Takeover",
+      "group": "Protect your users",
+      "summary": "Step up or refuse logins from a device the account has never used",
+      "requires": ["fingerprint-protect-action"]
+    },
+    {
+      "id": "account-sharing",
+      "title": "Account Sharing",
+      "group": "Grow your revenue",
+      "summary": "Cap how many devices can use one paid account",
+      "requires": ["fingerprint-protect-action"]
+    }
+  ]
 }

@@ -5,5 +5,42 @@
   "category": "use-case",
   "frameworks": [],
   "packages": [],
-  "envVars": ["FINGERPRINT_SECRET_API_KEY", "FINGERPRINT_REGION"]
+  "envVars": ["FINGERPRINT_SECRET_API_KEY", "FINGERPRINT_REGION"],
+  "useCases": [
+    {
+      "id": "credential-stuffing",
+      "title": "Credential Stuffing",
+      "group": "Protect your users",
+      "summary": "Cap failed logins per device, not per IP",
+      "requires": ["fingerprint-protect-action"]
+    },
+    {
+      "id": "card-testing",
+      "title": "Card Testing",
+      "group": "Protect your users",
+      "summary": "Cap orders per device so stolen cards can't be tried in bulk",
+      "requires": ["fingerprint-protect-action"]
+    },
+    {
+      "id": "loan-fraud",
+      "title": "Loan Fraud",
+      "group": "Protect your users",
+      "summary": "One application per device, with consistent applicant details",
+      "requires": ["fingerprint-protect-action"]
+    },
+    {
+      "id": "paywall-enforcement",
+      "title": "Paywall Enforcement",
+      "group": "Grow your revenue",
+      "summary": "Meter free articles per device, across incognito and cleared cookies",
+      "requires": ["fingerprint-protect-action"]
+    },
+    {
+      "id": "sms-pumping",
+      "title": "SMS Pumping",
+      "group": "Grow your revenue",
+      "summary": "Cap verification codes sent per device",
+      "requires": ["fingerprint-protect-action"]
+    }
+  ]
 }

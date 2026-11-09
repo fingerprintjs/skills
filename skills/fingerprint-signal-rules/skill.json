@@ -5,5 +5,21 @@
   "category": "use-case",
   "frameworks": [],
   "packages": [],
-  "envVars": ["FINGERPRINT_SECRET_API_KEY", "FINGERPRINT_REGION"]
+  "envVars": ["FINGERPRINT_SECRET_API_KEY", "FINGERPRINT_REGION"],
+  "useCases": [
+    {
+      "id": "regional-pricing",
+      "title": "Regional Pricing",
+      "group": "Grow your revenue",
+      "summary": "Price by real location; refuse local discounts behind a VPN",
+      "requires": ["fingerprint-protect-action"]
+    },
+    {
+      "id": "personalization",
+      "title": "Personalization",
+      "group": "Grow your revenue",
+      "summary": "Remember a visitor's preferences and location without a login",
+      "requires": []
+    }
+  ]
 }

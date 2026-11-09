@@ -62,7 +62,9 @@ if (await once.claimed(visitorId, coupon.code)) return res.json({ success: false
 await once.claim(visitorId, coupon.code)
 ```
 `scope` is the column that narrows the uniqueness (omit for global). `store` is `exists` and
-`insert` over your database; the snippet includes a SQLite implementation.
+`insert` over your database; the snippet includes a SQLite implementation. Wire `store` to whatever
+the app already persists with, and never add a database dependency for it (`memoryStore` is fine
+to start).
 
 ## Notes
 - Record the claim when the perk is actually granted, not during validation. The coupon tutorial

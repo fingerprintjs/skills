@@ -71,7 +71,8 @@ if (await limiter.exceeded(visitorId)) return res.json({ success: false, error: 
 if (!ok) { await limiter.record(visitorId); return res.json({ success: false, error: 'Login failed.' }) }
 ```
 `store` is two functions over your database: `countSince(key, visitorId, since)` and
-`insert(key, row)`. The snippet includes a SQLite implementation.
+`insert(key, row)`. The snippet includes a SQLite implementation; wire `store` to whatever the app
+already persists with, and never add a database dependency for it (`memoryStore` is fine to start).
 
 ## Notes
 - Key on `visitorId` from the verified event, never on a value the browser sent.
