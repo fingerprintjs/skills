@@ -1,0 +1,9 @@
+{
+  "id": "fingerprint-signal-rules",
+  "title": "Fingerprint — Signal rules (location, VPN, network, device, velocity)",
+  "role": "use-case",
+  "category": "use-case",
+  "frameworks": [],
+  "packages": [],
+  "envVars": ["FINGERPRINT_SECRET_API_KEY", "FINGERPRINT_REGION"]
+}

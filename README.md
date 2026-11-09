@@ -93,6 +93,15 @@ Clone this repo and copy the skill folders into the appropriate directory for yo
 - **Event tagging** — attach your own user / account / order IDs to identifications.
 - **Public key protection** — restrict your key to your own origins.
 
+**Use cases** — outcome recipes that start from the verified event and add your own logic, one per decision pattern rather than one per tutorial:
+
+- **Protect an action** — block bots and high Suspect Score traffic on a login, checkout, form, or content route; the base every use case starts from (covers web scraping).
+- **Velocity limits** — cap an action per device in a window: credential stuffing, card testing, SMS pumping, loan fraud, metered paywalls.
+- **One per device** — one coupon, bonus, signup, or survey response per device, refusing or withholding the perk.
+- **Device-to-account binding** — step up on an unknown device (account takeover) or cap devices per account (account sharing).
+- **Visitor records** — keep the visitor ID on your records for ban enforcement and chargeback evidence.
+- **Signal rules** — scenario-to-signal lookup for regional pricing, geo restrictions, timezone mismatch, datacenter traffic, mobile integrity, and personalization.
+
 ## How it works
 
 You ask in plain language ("add Fingerprint to this app") or run `/get-started`. The assistant reads

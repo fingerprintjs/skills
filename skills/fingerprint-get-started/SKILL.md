@@ -98,6 +98,25 @@ Map detected frameworks to skills:
    trial ends, the account is downgraded to the **Free** plan. If they want to keep Pro Plus
    features, point them to the dashboard billing/plan settings to upgrade before the trial ends.
 
+## Use-case recipes
+When the user names an outcome rather than a step, route it here once steps 1–2 are in place.
+Every scenario starts at `fingerprint-protect-action` (the bot + Suspect Score gate); add the
+second skill only when the scenario needs state of your own or a signal beyond those two.
+
+| User mentions | Skill | Add |
+| --- | --- | --- |
+| Block bots, Suspect Score, protect my login / checkout / form | `fingerprint-protect-action` | — |
+| Web scraping | `fingerprint-protect-action` (`route: 'content'`) | `fingerprint-velocity-limits` for a per-device page cap |
+| Credential stuffing, card testing, SMS pumping, loan fraud | `fingerprint-protect-action` | `fingerprint-velocity-limits` |
+| Paywall, metered free articles | `fingerprint-protect-action` (`route: 'content'`) | `fingerprint-velocity-limits` |
+| Coupon / promo abuse, bonus abuse, new account or trial fraud, survey fraud | `fingerprint-protect-action` | `fingerprint-one-per-device` |
+| Account takeover, unknown-device login, account sharing | `fingerprint-protect-action` | `fingerprint-device-account-binding` |
+| Ban enforcement, banned users returning | `fingerprint-visitor-records` | — (the tutorial skips the bot check) |
+| Chargeback disputes, device evidence | `fingerprint-visitor-records` | — (no gate; evidence only) |
+| Regional pricing, geo restriction, VPN users | `fingerprint-protect-action` | `fingerprint-signal-rules` |
+| Personalization by location | `fingerprint-signal-rules` | — (no gate) |
+| Timezone mismatch, datacenter traffic, mobile integrity, "which signal do I use" | `fingerprint-signal-rules` | — |
+
 ## How to verify the install (after steps 1–2)
 - **Preview the app**, trigger the action you wired up (e.g. load the page, submit a login/signup),
   and check that a new event appears on the **Events page in the Fingerprint dashboard**

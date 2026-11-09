@@ -1,0 +1,9 @@
+{
+  "id": "fingerprint-velocity-limits",
+  "title": "Fingerprint — Velocity limits per device",
+  "role": "use-case",
+  "category": "use-case",
+  "frameworks": [],
+  "packages": [],
+  "envVars": ["FINGERPRINT_SECRET_API_KEY", "FINGERPRINT_REGION"]
+}

@@ -29,7 +29,7 @@ Each Smart Signal is a top-level field on the event. The web-relevant set:
 | `ip_blocklist` | object: `attack_source`, `email_spam`, `tor_node` (IP on known-malicious lists) | Block or step-up on any sub-flag |
 | `velocity` | object of interval counts (`5_minutes`/`1_hour`/`24_hours`) per visitor/IP/linked_id | Rate-limit abuse / ATO |
 | `suspect_score` | integer — weighted aggregate of Smart Signals | Threshold-based routing |
-| `location_spoofing` | GPS/timezone spoofing | Score for geo-gated actions |
+| `location_spoofing` | mobile device has location spoofing enabled (mobile SDKs only) | Score for geo-gated actions; timezone mismatch is `vpn_methods.timezone_mismatch` |
 | `developer_tools` | devtools open | Score for scraping/automation |
 | `virtual_machine` | running in a VM | Score |
 | `raw_device_attributes` | low-level device attributes | Custom heuristics |
@@ -123,4 +123,6 @@ event where a bot was detected, absent otherwise.
 - Don't log the raw secret key or full event payloads containing PII.
 - Re-evaluate signals on **every** sensitive action; each `event_id` is single-use.
 
-See `snippets/signals-policy.js` for a composable scoring helper.
+See `snippets/signals-policy.js` for a composable scoring helper. For the scenario-to-signal
+lookup (regional pricing, geo restrictions, timezone, datacenter traffic, mobile integrity,
+velocity) see `fingerprint-signal-rules`.
