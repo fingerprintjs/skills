@@ -1,5 +1,7 @@
 // src/main.js — identify the visitor. Each get() call is a billable identification event,
 // so call it where you need the result (on load, or on an action) rather than on every render.
+// For a backend-verified flow, call it in the submit handler of the login form first and send the
+// event_id with that request; once it works, do the same on signup, checkout and coupon forms.
 import { fp } from './fingerprint.js'
 import { isFingerprintError } from '@fingerprint/agent'
 

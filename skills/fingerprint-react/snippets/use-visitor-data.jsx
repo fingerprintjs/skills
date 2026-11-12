@@ -1,4 +1,6 @@
-// Identify at the moment of a sensitive action, rather than on mount.
+// Identify at the moment of a sensitive action, rather than on mount. Wire the login form first;
+// once it works, reuse this handler shape on signup, password reset, checkout and coupon forms, so
+// each action sends its own event_id.
 import { useVisitorData } from '@fingerprint/react'
 
 function LoginForm() {

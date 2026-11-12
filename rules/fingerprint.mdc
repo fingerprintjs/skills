@@ -29,6 +29,7 @@ STOP. Your knowledge of Fingerprint SDK options, package names, and event field 
 - **Production only.** Never bake staging hosts, non-default endpoints, or environment overrides into code. Read the public key and region from env vars by name.
 - **Secrets never reach the client.** `FINGERPRINT_SECRET_API_KEY` is server-side only; only the public key (and region) may ship to the browser.
 - **Identification alone is not secure.** Pair frontend identification with server-side verification of the `event_id` against the Server API before trusting a `visitor_id`.
+- **One endpoint first, then extend.** Inventory the app's sensitive endpoints (login, signup, password reset, checkout, coupon redemption), wire one end to end (login when the app has it) so the user sees an event land, then offer the rest. Each identification is billable: don't silently wire every form, and don't silently stop at one without reporting what else you found.
 - **v4 only.** Use `event_id` and the flat event shape (`event.identification.visitor_id`, `event.bot`, …). Confirm the exact shape against the event schema above — don't assume `camelCase` vs `snake_case` or flat vs nested.
 
 ## Packages — v4 (confirm the current version against the docs; don't pin)
