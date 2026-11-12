@@ -32,11 +32,7 @@ async function verifyEvent(eventId) {
   return { ok: true, visitorId: id.visitor_id }
 }
 
-// Express usage:
-//   app.post('/api/login', async (req, res) => {
-//     const check = await verifyEvent(req.body.eventId)
-//     if (!check.ok) return res.status(403).json({ error: 'blocked', reason: check.reason })
-//     // ...proceed; bind check.visitorId to the account...
-//   })
+// Wire this into every sensitive endpoint (login, signup, password reset, checkout, coupon
+// redemption) — see routes.js / routes.mjs for the Express middleware and the full route list.
 
 module.exports = { verifyEvent }

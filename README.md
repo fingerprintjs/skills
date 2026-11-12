@@ -89,8 +89,8 @@ Clone this repo and copy the skill folders into the appropriate directory for yo
 | Angular | `fingerprint-angular` | Visitor identification in the browser |
 | Svelte / SvelteKit | `fingerprint-svelte` | Visitor identification in the browser |
 | Vanilla JavaScript (Vite, Webpack, plain `<script>`) | `fingerprint-javascript` | Visitor identification with the JS Agent directly — for stacks with no framework SDK |
-| Node (Express, Fastify, Koa, Nest, Hapi) | `fingerprint-node` | Server-side verification + fraud checks |
-| Python (FastAPI, Django, Flask) | `fingerprint-python` | Server-side verification + fraud checks |
+| Node (Express, Fastify, Koa, Nest, Hapi) | `fingerprint-node` | Server-side verification + fraud checks on every login, signup, password-reset, checkout and coupon endpoint |
+| Python (FastAPI, Django, Flask) | `fingerprint-python` | Server-side verification + fraud checks on every login, signup, password-reset, checkout and coupon endpoint |
 | Next.js | `fingerprint-nextjs` | Both halves in one app (client identify + server verify) |
 
 **Get Started** — turn a basic install into production-grade protection:
@@ -114,7 +114,8 @@ The `fingerprint-get-started` skill ties these together: it detects your stack a
 You ask in plain language ("add Fingerprint to this app") or run `/get-started`. The assistant reads
 your project to detect the framework, loads the matching skill, and follows it — installing the SDK,
 adding the provider and identification calls on the client, and the verification logic on the
-server, all matched to your existing code style. Each skill links the docs page it's based on, so
+server — on every login, signup, checkout and coupon flow it finds, not just the first — all
+matched to your existing code style. Each skill links the docs page it's based on, so
 you (or the assistant) can check any claim at the source.
 
 ## MCP Server

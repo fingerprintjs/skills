@@ -36,6 +36,33 @@ from the client.
    the checks below before trusting the action. See `snippets/verify.mjs` for ESM or
    `snippets/verify.js` for CommonJS, matching the client snippet from step 2.
 
+4. **Wire it into every sensitive endpoint.** Add the `requireVerifiedEvent` middleware from
+   `snippets/routes.mjs` / `snippets/routes.js` to each login, signup, password-reset, checkout and
+   coupon endpoint the app has (see the list below), reading `eventId` from the request body. Each
+   of those endpoints needs its own `event_id` from the frontend — one identification per action.
+
+## Which endpoints to protect
+
+Verify on **every** endpoint where a bot or a repeat device can do damage, not just the first one
+you find. Before writing code, inventory the codebase: grep route definitions, controllers and form
+handlers for `login|signin|sign-in|auth|session|signup|register|password|reset|otp|checkout|payment|order|coupon|promo|redeem`,
+and read the handlers, since a login can live at `POST /sessions` and a signup at `POST /users`.
+Add the middleware to each one that exists. Then tell the user which endpoints you protected and
+which of the list below the app doesn't have.
+
+| Endpoint | Protects against | After the check passes |
+| --- | --- | --- |
+| Login / sign-in | credential stuffing, account takeover | bind `visitor_id` to the account on first trusted login; step up (email / OTP) on an unknown device |
+| Signup / register | fake and duplicate accounts | refuse or flag when an account already exists for the `visitor_id`; store it on the new account |
+| Password reset / OTP / magic link | account takeover, SMS pumping | cap sends per `visitor_id` (e.g. 5 per 24 h) |
+| Checkout / payment / add payment method | card testing, payment fraud | cap orders per `visitor_id` per day; store `visitor_id` on the order as chargeback evidence |
+| Coupon / promo / referral / bonus redemption | promo abuse | one redemption per `visitor_id` per code |
+| Email / password / profile change, free-trial start, review / comment / contact forms | account takeover, spam | same gate; store `visitor_id` on the record |
+
+Protect every endpoint in the first five rows that exists in the app, and the last row where the
+app already has abuse problems. The per-endpoint "after" logic is the app's own data; the gate in
+front of it is the same everywhere.
+
 ## v4 event shape (flat — per the Server API event schema)
 `getEvent` returns the event object directly:
 - `event.identification.visitor_id` — the trusted visitor id
@@ -62,7 +89,8 @@ from the client.
 - **Identity match:** bind `visitor_id` ↔ user on first trusted use; re-check on later actions.
 
 ## Notes
-- Fetch and check server-side on **every** sensitive action.
+- Fetch and check server-side on **every** sensitive action — all of the endpoints above that the
+  app has, not only login.
 - Fail closed on lookup errors for high-risk flows.
 - Each `event_id` is single-use per action — don't cache a pass/fail across requests.
 - Keep the secret key out of logs and any client bundle.

@@ -34,6 +34,11 @@ client-side. For plain HTML or an unsupported framework, use `@fingerprint/agent
    identify-on-demand pass `{ immediate: false }` and call `getData()` on the action you care
    about; it returns `{ visitor_id, event_id, ... }`. See `snippets/use-visitor-data.vue`.
 
+   **Wire every sensitive form, not just login.** Find each form or handler that submits a login /
+   sign-in, signup / register, password reset / OTP request, checkout / payment, or coupon / promo
+   redemption, and call it at that moment — each action needs its own `event_id`, and a form that
+   sends none leaves its endpoint unprotected. Tell the user which forms you wired.
+
    Identification is where this skill stops. It gives you a hint, not a trust decision — anything
    from the browser can be forged. If the app has a backend, send the `event_id` with the request
    and verify it there (`fingerprint-node` / `fingerprint-python`); if it doesn't, the identification

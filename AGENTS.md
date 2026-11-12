@@ -31,6 +31,10 @@ restatement of them).
   into snippets or skills. Read keys/region from env vars by name.
 - **Secrets never reach the client.** `FINGERPRINT_SECRET_API_KEY` is server-side only; only the
   public key (and region) may ship to the browser.
+- **Every sensitive endpoint.** An integration covers all of the login, signup, password-reset,
+  checkout and coupon endpoints the app has, on both halves (the form sends an `event_id`, the
+  handler verifies it), not just the first one found. Skills and snippets name the full list and
+  tell the agent to inventory the codebase for it.
 - **v4 only.** Use `event_id` and the flat event shape (`event.identification.visitor_id`,
   `event.bot`, …). Don't reintroduce v3 packages or the `event.products.*` envelope.
 
