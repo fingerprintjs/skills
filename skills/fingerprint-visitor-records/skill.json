@@ -1,0 +1,25 @@
+{
+  "id": "fingerprint-visitor-records",
+  "title": "Fingerprint — Visitor records (ban enforcement, chargeback evidence)",
+  "role": "use-case",
+  "category": "use-case",
+  "frameworks": [],
+  "packages": [],
+  "envVars": ["FINGERPRINT_SECRET_API_KEY", "FINGERPRINT_REGION"],
+  "useCases": [
+    {
+      "id": "ban-enforcement",
+      "title": "Ban Enforcement",
+      "group": "Protect your platform",
+      "summary": "A banned device stays banned with a new email",
+      "requires": []
+    },
+    {
+      "id": "chargeback-dispute",
+      "title": "Chargeback Dispute",
+      "group": "Protect your platform",
+      "summary": "Keep device evidence on every purchase for dispute responses",
+      "requires": []
+    }
+  ]
+}

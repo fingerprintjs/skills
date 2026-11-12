@@ -1,0 +1,18 @@
+{
+  "id": "fingerprint-protect-action",
+  "title": "Fingerprint — Protect an action (bot detection + Suspect Score)",
+  "role": "use-case",
+  "category": "use-case",
+  "frameworks": [],
+  "packages": [],
+  "envVars": ["FINGERPRINT_SECRET_API_KEY", "FINGERPRINT_REGION"],
+  "useCases": [
+    {
+      "id": "web-scraping",
+      "title": "Web Scraping",
+      "group": "Protect your platform",
+      "summary": "Keep bad bots off content and listing routes, let real crawlers through",
+      "requires": []
+    }
+  ]
+}

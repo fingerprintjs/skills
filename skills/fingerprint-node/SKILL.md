@@ -61,6 +61,10 @@ from the client.
   right here and wrong on a crawlable route, where it takes out search-engine crawlers too.
 - **Identity match:** bind `visitor_id` ↔ user on first trusted use; re-check on later actions.
 
+> **Then decide per action.** The checks above verify the event. The per-action policy — bot
+> check scoped to the route, Suspect Score threshold, and whether to block, step up, or degrade —
+> is `fingerprint-protect-action`; the use-case skills it lists add the business logic on top.
+
 ## Notes
 - Fetch and check server-side on **every** sensitive action.
 - Fail closed on lookup errors for high-risk flows.

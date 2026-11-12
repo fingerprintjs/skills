@@ -1,0 +1,39 @@
+{
+  "id": "fingerprint-one-per-device",
+  "title": "Fingerprint — One per device (coupon, bonus, signup, survey)",
+  "role": "use-case",
+  "category": "use-case",
+  "frameworks": [],
+  "packages": [],
+  "envVars": ["FINGERPRINT_SECRET_API_KEY", "FINGERPRINT_REGION"],
+  "useCases": [
+    {
+      "id": "coupon-abuse",
+      "title": "Coupon Abuse",
+      "group": "Grow your revenue",
+      "summary": "One redemption per device per promo code",
+      "requires": ["fingerprint-protect-action"]
+    },
+    {
+      "id": "new-account-fraud",
+      "title": "New Account Fraud",
+      "group": "Grow your revenue",
+      "summary": "One account or free trial per device",
+      "requires": ["fingerprint-protect-action"]
+    },
+    {
+      "id": "bonus-abuse",
+      "title": "Bonus Abuse",
+      "group": "Grow your revenue",
+      "summary": "Create the account, withhold the welcome bonus from a repeat device",
+      "requires": ["fingerprint-protect-action"]
+    },
+    {
+      "id": "survey-fraud",
+      "title": "Survey Fraud",
+      "group": "Grow your revenue",
+      "summary": "One response per device per survey",
+      "requires": ["fingerprint-protect-action"]
+    }
+  ]
+}
