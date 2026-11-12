@@ -1,6 +1,6 @@
 // app/actions.ts — the same verification from Server Actions instead of Route Handlers. The client
-// calls an action and passes the event_id from getData() as an argument. Every sensitive action
-// verifies first; add one for each the app has.
+// calls an action and passes the event_id from getData() as an argument. Start with login; once it
+// works, offer the same for the other sensitive actions the app has.
 'use server'
 
 import { verifyEvent } from '@/lib/fingerprint-server'

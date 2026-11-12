@@ -1,6 +1,6 @@
-<!-- Identify at the moment of a sensitive action, rather than on mount. Use this same handler shape
-     on every sensitive form — login, signup, password reset, checkout, coupon redemption — so each
-     action sends its own event_id. -->
+<!-- Identify at the moment of a sensitive action, rather than on mount. Wire the login form first;
+     once it works, reuse this handler shape on signup, password reset, checkout and coupon forms, so
+     each action sends its own event_id. -->
 <script setup>
 import { useVisitorData } from '@fingerprint/vue'
 

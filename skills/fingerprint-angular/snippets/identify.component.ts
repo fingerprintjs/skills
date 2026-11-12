@@ -1,6 +1,6 @@
-// Identify at the moment of a sensitive action, rather than on init. Use this same handler shape
-// on every sensitive form — login, signup, password reset, checkout, coupon redemption — so each
-// action sends its own event_id.
+// Identify at the moment of a sensitive action, rather than on init. Wire the login form first;
+// once it works, reuse this handler shape on signup, password reset, checkout and coupon forms, so
+// each action sends its own event_id.
 import { Component } from '@angular/core'
 import { FingerprintService } from '@fingerprint/angular'
 

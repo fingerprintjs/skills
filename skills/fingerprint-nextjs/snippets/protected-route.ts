@@ -1,4 +1,4 @@
-// lib/protected-route.ts — wrap every sensitive Route Handler so it verifies the event_id first.
+// lib/protected-route.ts — wraps a sensitive Route Handler so it verifies the event_id first.
 // Imported only from Route Handlers, never from a 'use client' file.
 import 'server-only'
 import { verifyEvent } from '@/lib/fingerprint-server'

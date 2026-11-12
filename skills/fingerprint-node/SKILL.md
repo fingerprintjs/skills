@@ -36,19 +36,28 @@ from the client.
    the checks below before trusting the action. See `snippets/verify.mjs` for ESM or
    `snippets/verify.js` for CommonJS, matching the client snippet from step 2.
 
-4. **Wire it into every sensitive endpoint.** Add the `requireVerifiedEvent` middleware from
-   `snippets/routes.mjs` / `snippets/routes.js` to each login, signup, password-reset, checkout and
-   coupon endpoint the app has (see the list below), reading `eventId` from the request body. Each
-   of those endpoints needs its own `event_id` from the frontend — one identification per action.
+4. **Wire one endpoint, verify, then extend.** Add the `requireVerifiedEvent` middleware from
+   `snippets/routes.mjs` / `snippets/routes.js` to the first endpoint (login when the app has it),
+   reading `eventId` from the request body. Once the user has seen it work, offer the other
+   endpoints from the list below; each needs its own `event_id` from the frontend — one
+   identification per action.
 
 ## Which endpoints to protect
 
-Verify on **every** endpoint where a bot or a repeat device can do damage, not just the first one
-you find. Before writing code, inventory the codebase: grep route definitions, controllers and form
-handlers for `login|signin|sign-in|auth|session|signup|register|password|reset|otp|checkout|payment|order|coupon|promo|redeem`,
-and read the handlers, since a login can live at `POST /sessions` and a signup at `POST /users`.
-Add the middleware to each one that exists. Then tell the user which endpoints you protected and
-which of the list below the app doesn't have.
+Inventory the app's sensitive endpoints before writing code: grep route definitions, controllers and
+form handlers for the pattern below and read the handlers, since a login can live at
+`POST /sessions` and a signup at `POST /users`.
+
+```
+login|signin|sign-in|auth|session|signup|register|password|reset|otp|checkout|payment|order|coupon|promo|redeem
+```
+
+**First integration: wire one endpoint, then extend.** Add the `requireVerifiedEvent` middleware to
+one endpoint. Pick login when the app has one, otherwise the first row below that it does have.
+Verify it end to end (the event shows on the dashboard Events page and the handler rejects a request
+without an `event_id`). Then report the rest of the inventory and offer to extend to each remaining
+endpoint; wire them when the user says so. Each identification is billable, so don't wire every form
+unasked, and don't stop at one without saying what else you found.
 
 | Endpoint | Protects against | After the check passes |
 | --- | --- | --- |
@@ -59,9 +68,7 @@ which of the list below the app doesn't have.
 | Coupon / promo / referral / bonus redemption | promo abuse | one redemption per `visitor_id` per code |
 | Email / password / profile change, free-trial start, review / comment / contact forms | account takeover, spam | same gate; store `visitor_id` on the record |
 
-Protect every endpoint in the first five rows that exists in the app, and the last row where the
-app already has abuse problems. The per-endpoint "after" logic is the app's own data; the gate in
-front of it is the same everywhere.
+The gate in front of each endpoint is the same; the "after" logic is the app's own data.
 
 ## v4 event shape (flat — per the Server API event schema)
 `getEvent` returns the event object directly:
@@ -89,8 +96,8 @@ front of it is the same everywhere.
 - **Identity match:** bind `visitor_id` ↔ user on first trusted use; re-check on later actions.
 
 ## Notes
-- Fetch and check server-side on **every** sensitive action — all of the endpoints above that the
-  app has, not only login.
+- Fetch and check server-side on every sensitive action you wire; the list above is what to offer
+  once the first one works.
 - Fail closed on lookup errors for high-risk flows.
 - Each `event_id` is single-use per action — don't cache a pass/fail across requests.
 - Keep the secret key out of logs and any client bundle.

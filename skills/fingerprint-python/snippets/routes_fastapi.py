@@ -1,4 +1,4 @@
-# FastAPI — add the gate to every sensitive endpoint, not just login.
+# FastAPI — the gate on each sensitive endpoint. Wire one first (login), verify, then add the rest.
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
@@ -20,9 +20,10 @@ def require_verified(event_id: str) -> str:
     return check["visitor_id"]
 
 
-# Each sensitive request model extends ProtectedRequest so it carries event_id. Wire require_verified
-# into each of these that exists in the app. Route names differ per codebase — a login can be
-# POST /sessions and a signup POST /users — so match on what the handler does.
+# Each sensitive request model extends ProtectedRequest so it carries event_id. Start with the one
+# the user wants to see first (login), then offer the others that exist in the app. Route names
+# differ per codebase — a login can be POST /sessions and a signup POST /users — so match on what
+# the handler does.
 
 
 class LoginRequest(ProtectedRequest):

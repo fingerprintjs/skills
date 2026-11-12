@@ -43,5 +43,5 @@ def verify_event(event_id):
     return {"ok": True, "visitor_id": ident.visitor_id}
 
 
-# Wire this into every sensitive endpoint (login, signup, password reset, checkout, coupon
-# redemption) — see routes_fastapi.py, routes_flask.py or routes_django.py for the full route list.
+# Wire this into one sensitive endpoint first (login), then the others (signup, password reset,
+# checkout, coupon redemption) — see routes_fastapi.py, routes_flask.py or routes_django.py.

@@ -22,10 +22,9 @@ skill with the Skill tool; in other agents, load and follow the named skill.
    Also **inventory the sensitive endpoints**: grep routes, controllers and form handlers for
    `login|signin|sign-in|auth|session|signup|register|password|reset|otp|checkout|payment|order|coupon|promo|redeem`
    and read the handlers (a login can be `POST /sessions`). Record, per endpoint, whether its form
-   already sends an `event_id` and whether its handler verifies one. Step 1 is only done when
-   **every** login, signup, password-reset, checkout and coupon form the app has identifies, and
-   step 2 only when every matching handler verifies — an integration that covers login alone is
-   not done.
+   already sends an `event_id` and whether its handler verifies one. On a first integration wire
+   **one** of them end to end (login when the app has it) so the user sees an event land, then
+   offer the rest; see *Extend coverage* below.
 2. **Report the checklist** with each step marked done / not done, plus the endpoint inventory
    (protected / unprotected / not present).
 3. **Walk the not-done steps in order.** For each, explain what it does, then apply the matching
@@ -76,14 +75,12 @@ Map detected frameworks to skills:
    → Apply the matching frontend skill: `fingerprint-react` / `fingerprint-vue` /
    `fingerprint-angular` / `fingerprint-svelte` / `fingerprint-javascript` (no framework SDK), or
    `fingerprint-nextjs` (which also covers step 2).
-   *Done when every sensitive form from the inventory calls `getData()` on submit and an event is
-   received.*
+   *Done when the first wired form calls `getData()` on submit and an event is received.*
 2. **Access detailed insights (backend / Server API)** — verify the event server-side and read
    Smart Signals.
    → Apply the matching backend skill: `fingerprint-node` / `fingerprint-python` for the
    verification flow, then `fingerprint-smart-signals` to act on the full signal set.
-   *Done when every sensitive endpoint from the inventory calls `getEvent` and acts on the
-   result.*
+   *Done when that form's handler calls `getEvent` and acts on the result.*
 
    > **Strongly recommended for security-sensitive actions** (login, signup, checkout): the client
    > only identifies — a real trust decision needs the server to verify the event. This is the
@@ -109,12 +106,19 @@ Map detected frameworks to skills:
    features, point them to the dashboard billing/plan settings to upgrade before the trial ends.
 
 ## How to verify the install (after steps 1–2)
-- **Preview the app**, trigger each action you wired up (submit the login, the signup, a checkout,
-  a coupon), and check that a new event appears on the **Events page in the Fingerprint dashboard**
+- **Preview the app**, trigger the action you wired up (e.g. submit the login), and check that a
+  new event appears on the **Events page in the Fingerprint dashboard**
   (https://dashboard.fingerprint.com). An event with an `event_id` confirms identification works
   end to end.
 - If no event shows up, the usual cause is an **ad blocker** eating the request during testing —
   disable it and retry. For production accuracy, do step 3.
+
+## Extend coverage (after the first endpoint works)
+Once the user has seen the first endpoint work, show the rest of the endpoint inventory (signup,
+password reset / OTP, checkout / payment, coupon / promo redemption — whichever the app has) and
+offer to wire each one the same way: the form sends its own `event_id`, the handler verifies it.
+Each identification is billable, so wire them when the user says so rather than all at once. The
+per-stack skills list the endpoints and what to do after each check passes.
 
 ## Rules
 - Step 1 is complete once identification works (an event is received). The later steps are

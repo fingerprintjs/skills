@@ -34,10 +34,12 @@ it (on load, or on an action like login or checkout).
    `getVisitorData()` on the action you care about; it returns `{ visitor_id, event_id, ... }`. See
    `snippets/identify.component.ts`.
 
-   **Wire every sensitive form, not just login.** Find each form or handler that submits a login /
-   sign-in, signup / register, password reset / OTP request, checkout / payment, or coupon / promo
-   redemption, and call it at that moment — each action needs its own `event_id`, and a form that
-   sends none leaves its endpoint unprotected. Tell the user which forms you wired.
+   **One form first, then extend.** Find every form or handler that submits a login / sign-in,
+   signup / register, password reset / OTP request, checkout / payment, or coupon / promo
+   redemption. Wire the login form first (or the first of those the app has), let the user see the
+   event land, then offer the others — each action needs its own `event_id`, and each call is
+   billable, so don't wire every form unasked. Tell the user which forms you wired and which you
+   found but left for later.
 
    Identification is where this skill stops. It gives you a hint, not a trust decision — anything
    from the browser can be forged. If the app has a backend, send the `event_id` with the request

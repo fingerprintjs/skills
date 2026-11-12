@@ -1,6 +1,6 @@
 // Client components: identify at the moment of a sensitive action and send the event_id to the
-// server. One hook, used by every sensitive form — a form that doesn't send an event_id leaves its
-// endpoint unprotected, so wire login, signup, password reset, checkout and coupon redemption alike.
+// server. One hook, reused by each sensitive form. Wire the login form first; once the user has seen
+// it work, offer signup, password reset, checkout and coupon redemption the same way.
 'use client'
 
 import { useVisitorData } from '@fingerprint/react'

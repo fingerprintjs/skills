@@ -1,4 +1,5 @@
-// Express — add the gate to every sensitive endpoint, not just login. (ESM; see routes.js for CommonJS.)
+// Express — the gate on each sensitive endpoint. Wire one first (login), verify, then add the rest.
+// (ESM; see routes.js for CommonJS.)
 import express from 'express'
 import { verifyEvent } from './verify.mjs'
 
@@ -15,8 +16,9 @@ export async function requireVerifiedEvent(req, res, next) {
 export const router = express.Router()
 router.use(express.json())
 
-// Wire the middleware into each of these that exists in the app. Route names differ per codebase —
-// a login can be POST /sessions and a signup POST /users — so match on what the handler does.
+// Start with the one the user wants to see first (login), then offer the others that exist in the
+// app. Route names differ per codebase — a login can be POST /sessions and a signup POST /users —
+// so match on what the handler does.
 
 router.post('/api/login', requireVerifiedEvent, async (req, res) => {
   const { visitorId } = req.fingerprint

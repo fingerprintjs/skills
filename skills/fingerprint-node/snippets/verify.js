@@ -32,7 +32,7 @@ async function verifyEvent(eventId) {
   return { ok: true, visitorId: id.visitor_id }
 }
 
-// Wire this into every sensitive endpoint (login, signup, password reset, checkout, coupon
-// redemption) — see routes.js / routes.mjs for the Express middleware and the full route list.
+// Wire this into one sensitive endpoint first (login), then the others (signup, password reset,
+// checkout, coupon redemption) — see routes.js / routes.mjs for the Express middleware and routes.
 
 module.exports = { verifyEvent }

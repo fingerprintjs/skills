@@ -1,4 +1,4 @@
-# Django — add the gate to every sensitive endpoint, not just login.
+# Django — the gate on each sensitive endpoint. Wire one first (login), verify, then add the rest.
 import json
 from functools import wraps
 
@@ -27,8 +27,9 @@ def require_verified_event(view):
     return wrapper
 
 
-# Wire the decorator onto each of these that exists in the app. Route names differ per codebase —
-# a login can be POST /sessions and a signup POST /users — so match on what the handler does.
+# Start with the one the user wants to see first (login), then offer the others that exist in the
+# app. Route names differ per codebase — a login can be POST /sessions and a signup POST /users —
+# so match on what the handler does.
 # (Add @csrf_exempt only for endpoints your JSON client genuinely can't send the CSRF token to.)
 
 

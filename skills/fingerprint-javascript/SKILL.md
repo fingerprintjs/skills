@@ -55,10 +55,12 @@ instead — see `snippets/cdn.html`.
    action you care about rather than on every page view. It accepts `{ tag, linkedId, timeout }`.
    See `snippets/identify.js`.
 
-   **Wire every sensitive form, not just login.** Find each form or handler that submits a login /
-   sign-in, signup / register, password reset / OTP request, checkout / payment, or coupon / promo
-   redemption, and call it at that moment — each action needs its own `event_id`, and a form that
-   sends none leaves its endpoint unprotected. Tell the user which forms you wired.
+   **One form first, then extend.** Find every form or handler that submits a login / sign-in,
+   signup / register, password reset / OTP request, checkout / payment, or coupon / promo
+   redemption. Wire the login form first (or the first of those the app has), let the user see the
+   event land, then offer the others — each action needs its own `event_id`, and each call is
+   billable, so don't wire every form unasked. Tell the user which forms you wired and which you
+   found but left for later.
 
 4. **Verify it works.** Disable your ad blocker, run the dev server, trigger the call, and confirm
    a `visitor_id` is logged in the browser console (or that the event appears on the dashboard
