@@ -28,7 +28,9 @@ account as well as by device.
    check; that part is `fingerprint-velocity-limits`.)
 2. **Load the devices bound to this account.**
 3. **First ever login** for the account: bind this `visitorId` and allow. The first device is the
-   baseline.
+   baseline, so it must be a clean login: with a soft risk signal (VPN, proxy, tampering, IP
+   blocklist, velocity), step up first and bind only on success. Binding a risky first device
+   makes the attacker the baseline and the owner the unknown device.
 4. **Known device**: allow.
 5. **Unknown device**:
    - *Takeover mode*: step up. On success, bind the device. If you cannot step up, refuse and

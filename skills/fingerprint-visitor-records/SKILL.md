@@ -56,12 +56,13 @@ ALTER TABLE purchases ADD COLUMN chargeback INTEGER NOT NULL DEFAULT 0;
 ```js
 const records = visitorRecords(store)
 if (await records.isBanned(visitorId)) return res.json({ success: false, message: 'You are banned from posting listings.' })
-await store.insert('listings', { ...listing, visitorId })
+await store.insert('listings', { title, price, visitorId }) // name the columns; never spread the request body
 // moderator:  await records.ban(visitorId, 'spam listings')
 // dispute:    const related = await records.related('purchases', { visitorId, email })
 ```
 `store` is `find`, `findOr` and `insert` over your database; the snippet includes a SQLite
-implementation. Wire it to whatever the app already persists with, and never add a database
+implementation. `insert` is a plain insert, so a constraint failure on your table surfaces as an
+error; only `ban()` inserts with `ignore`, so banning twice is a no-op. Wire it to whatever the app already persists with, and never add a database
 dependency for it (`memoryStore` is fine to start).
 
 ## Notes

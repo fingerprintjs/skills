@@ -18,8 +18,11 @@ function deviceBinding(store, { mode = 'step-up', maxDevices = 1 } = {}) {
       const known = bound.some((d) => d.visitorId === visitorId)
 
       if (bound.length === 0) {
-        await store.upsert(accountId, visitorId) // first device is the baseline
-        return { outcome: riskSignals.length ? 'step_up' : 'allow', known: false, bound: 1 }
+        // A risky first login is not bound: bind() after the step-up, or an attacker on a VPN who
+        // never passes it becomes the baseline and the owner is the unknown device.
+        if (riskSignals.length) return { outcome: 'step_up', known: false, bound: 0, reason: 'first_device_risk' }
+        await store.upsert(accountId, visitorId) // first clean device is the baseline
+        return { outcome: 'allow', known: false, bound: 1 }
       }
       if (known) {
         await store.upsert(accountId, visitorId) // bumps lastSeenAt

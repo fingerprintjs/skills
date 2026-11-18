@@ -58,10 +58,12 @@ block a later legitimate claim from the same device.
 `snippets/one-per-device.js`:
 ```js
 const once = oncePerDevice(store, { key: 'redemptions', scope: 'code' })
-if (await once.claimed(visitorId, coupon.code)) return res.json({ success: false, error: 'Coupon has already been redeemed.' })
-await once.claim(visitorId, coupon.code)
+if (!(await once.claim(visitorId, coupon.code))) return res.json({ success: false, error: 'Coupon has already been redeemed.' })
 ```
-`scope` is the column that narrows the uniqueness (omit for global). `store` is `exists` and
+`claim` is the check: it returns `false` when the row already exists or a parallel request won
+the insert, so a `claimed()` lookup before it would only lose the race. Use `claimed()` for early
+feedback (coupon validation), never as the gate. `scope` is the column that narrows the
+uniqueness (omit for global). `store` is `exists` and
 `insert` over your database; the snippet includes a SQLite implementation. Wire `store` to whatever
 the app already persists with, and never add a database dependency for it (`memoryStore` is fine
 to start).

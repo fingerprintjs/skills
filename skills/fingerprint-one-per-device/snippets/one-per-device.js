@@ -2,11 +2,13 @@
 // `visitorId` comes from protectAction() (fingerprint-protect-action), never from the browser.
 //
 //   const once = oncePerDevice(store, { key: 'redemptions', scope: 'code' })
-//   if (await once.claimed(visitorId, coupon.code)) return alreadyClaimed()
-//   await once.claim(visitorId, coupon.code)              // returns false if a parallel request won
+//   if (!(await once.claim(visitorId, coupon.code))) return alreadyClaimed()  // false: already claimed, or a parallel request won
 //
 //   const signup = oncePerDevice(store, { key: 'accounts' })  // global: one account per device
-//   if (await signup.claimed(visitorId)) return fail()
+//   if (!(await signup.claim(visitorId))) return fail()
+//
+// claimed() is a read for early feedback (e.g. at coupon validation); claim() is the check that
+// counts, since the unique index makes it atomic.
 
 /**
  * @param {{ exists(key, visitorId, scopeValue): Promise<boolean>, insert(key, row): Promise<boolean> }} store
