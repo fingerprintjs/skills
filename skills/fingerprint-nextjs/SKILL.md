@@ -71,6 +71,10 @@ stays server-only.
   right here and wrong on a crawlable route, where it takes out search-engine crawlers too.
 - **Identity match:** bind `visitor_id` ↔ user on first trusted use; re-check on later actions.
 
+> **Then decide per action.** The checks above verify the event. The per-action policy — bot
+> check scoped to the route, Suspect Score threshold, and whether to block, step up, or degrade —
+> is `fingerprint-protect-action`; the use-case skills it lists add the business logic on top.
+
 ## v4 event shape (flat — per the Server API event schema)
 `getEvent` returns the event object directly:
 - `event.identification.visitor_id` — the trusted visitor id

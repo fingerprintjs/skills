@@ -38,11 +38,18 @@ restatement of them).
 
 - Each skill is `skills/<id>/` with `skill.json` (metadata), `SKILL.md` (frontmatter `name` +
   `description`, then the guide), and optional `snippets/`.
-- `role`: `frontend` | `backend` | `fullstack` | `enhancement` | `orchestrator`. The CLI wizard
-  only auto-selects the first three (matched by framework); `enhancement` skills are for the Get
-  Started flow, and the single `orchestrator` skill (`fingerprint-get-started`) detects the stack
-  and delegates to the others. Both are reached via `/get-started` or auto-loaded by their
-  `description`.
+- `role`: `frontend` | `backend` | `fullstack` | `enhancement` | `use-case` | `orchestrator`. The
+  CLI wizard only auto-selects the first three (matched by framework); `enhancement` skills are
+  for the Get Started flow, `use-case` skills are stack-agnostic outcome recipes (one per decision
+  pattern, not one per docs tutorial) that start from `fingerprint-protect-action`, and the single
+  `orchestrator` skill (`fingerprint-get-started`) detects the stack and delegates to the others.
+  All are reached via `/get-started` or auto-loaded by their `description`.
+- A `use-case` skill's `skill.json` lists the docs use cases it covers in `useCases`: `id` (the
+  tutorial slug), `title`, `group` (`Protect your users` | `Grow your revenue` | `Protect your
+  platform`), a one-line `summary`, and `requires` (skill ids to install alongside, usually
+  `fingerprint-protect-action`). The CLI builds its use-case menu from these entries and installs
+  the skill plus its `requires`; the routing table in `fingerprint-get-started` is the same mapping
+  for agents that read markdown. Keep the two in sync.
 - `skill.json` `packages` lists names only (no version pins). The CLI allowlists installable
   packages (`@fingerprint/*`, `dotenv`, `python-dotenv`, `fingerprint-server-sdk`) — adding a new
   dependency means updating that allowlist in `fingerprint-cli`.

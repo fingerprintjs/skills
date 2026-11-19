@@ -109,6 +109,15 @@ The `fingerprint-get-started` skill ties these together: it detects your stack a
 | --- | --- |
 | `/get-started` | Detect your stack, install identification + server-side verification, then walk the remaining protection steps (`/fingerprint:get-started` in Claude Code) |
 
+**Use cases** — outcome recipes that start from the verified event and add your own logic, one per decision pattern rather than one per tutorial:
+
+- **Protect an action** — block bots and high Suspect Score traffic on a login, checkout, form, or content route; the base every use case starts from (covers web scraping).
+- **Velocity limits** — cap an action per device in a window: credential stuffing, card testing, SMS pumping, loan fraud, metered paywalls.
+- **One per device** — one coupon, bonus, signup, or survey response per device, refusing or withholding the perk.
+- **Device-to-account binding** — step up on an unknown device (account takeover) or cap devices per account (account sharing).
+- **Visitor records** — keep the visitor ID on your records for ban enforcement and chargeback evidence.
+- **Signal rules** — scenario-to-signal lookup for regional pricing, geo restrictions, timezone mismatch, datacenter traffic, mobile integrity, and personalization.
+
 ## How it works
 
 You ask in plain language ("add Fingerprint to this app") or run `/get-started`. The assistant reads
