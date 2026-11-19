@@ -75,6 +75,12 @@ Map detected frameworks to skills:
    verification flow, then `fingerprint-smart-signals` to act on the full signal set.
    *Done when the server calls `getEvent` and reads signals.*
 
+   When the frontend was installed in an earlier run (possibly another repo the CLI points you
+   at), check it against this step before finishing: the form sends its `event_id` to the route
+   this step protects, and with a use-case skill it identifies on the action that skill names
+   with its `linkedId` and `tag`. Edit the frontend where it differs; do not leave the fix as a
+   note for the user.
+
    > **Strongly recommended for security-sensitive actions** (login, signup, checkout): the client
    > only identifies — a real trust decision needs the server to verify the event. This is the
    > recommended next step, not a hard requirement (Next.js does both in one skill).

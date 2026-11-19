@@ -109,14 +109,18 @@ The `fingerprint-get-started` skill ties these together: it detects your stack a
 | --- | --- |
 | `/get-started` | Detect your stack, install identification + server-side verification, then walk the remaining protection steps (`/fingerprint:get-started` in Claude Code) |
 
-**Use cases** — outcome recipes that start from the verified event and add your own logic, one per decision pattern rather than one per tutorial:
+**Use cases** — outcome recipes built from the [use-case tutorials](https://docs.fingerprint.com/docs/use-case-tutorials-overview). They start from the verified event and add your own logic, one skill per decision pattern rather than one per tutorial. Every scenario starts at `fingerprint-protect-action`; the second skill is added when the scenario needs state of its own or a signal beyond the gate.
 
-- **Protect an action** — block bots and high Suspect Score traffic on a login, checkout, form, or content route; the base every use case starts from (covers web scraping).
-- **Velocity limits** — cap an action per device in a window: credential stuffing, card testing, SMS pumping, loan fraud, metered paywalls.
-- **One per device** — one coupon, bonus, signup, or survey response per device, refusing or withholding the perk.
-- **Device-to-account binding** — step up on an unknown device (account takeover) or cap devices per account (account sharing).
-- **Visitor records** — keep the visitor ID on your records for ban enforcement and chargeback evidence.
-- **Signal rules** — scenario-to-signal lookup for regional pricing, geo restrictions, timezone mismatch, datacenter traffic, mobile integrity, and personalization.
+| Skill | Covers |
+| --- | --- |
+| `fingerprint-protect-action` | The shared gate (bot + Suspect Score) on a login, checkout, form, or content route; web scraping; "block bots on my login" |
+| `fingerprint-velocity-limits` | Credential stuffing, card testing, SMS pumping, loan fraud, metered paywalls |
+| `fingerprint-one-per-device` | Coupon abuse, bonus abuse, new account fraud, survey fraud |
+| `fingerprint-device-account-binding` | Account takeover (step up on an unknown device), account sharing (cap devices per account) |
+| `fingerprint-visitor-records` | Ban enforcement, chargeback disputes |
+| `fingerprint-signal-rules` | Regional pricing, geo restriction, personalization, timezone / datacenter / mobile integrity / velocity |
+
+Each use-case skill's `skill.json` lists the business use cases it covers; the [Fingerprint CLI](https://github.com/fingerprintjs/fingerprint-cli) builds its use-case menu from them, and `fingerprint-get-started` routes a named outcome to the right skill.
 
 ## How it works
 
