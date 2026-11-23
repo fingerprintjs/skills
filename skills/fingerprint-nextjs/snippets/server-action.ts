@@ -1,3 +1,6 @@
+/* eslint-disable */
+// @ts-nocheck
+// Reference snippet: the two lines above keep the host repo's linter off this file. Drop them when copying.
 // app/actions.ts — same verification from a Server Action instead of a Route Handler.
 // The client calls this action and passes the event_id from getData() as an argument.
 'use server'

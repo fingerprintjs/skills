@@ -1,3 +1,6 @@
+/* eslint-disable */
+// @ts-nocheck
+// Reference snippet: the two lines above keep the host repo's linter off this file. Drop them when copying.
 // Register once at the app root (standalone app: src/app/app.config.ts).
 // The region MUST match your workspace ('us' | 'eu' | 'ap') or identification fails with
 // "API key not found" — read the key and region from environment.ts, don't hardcode them.

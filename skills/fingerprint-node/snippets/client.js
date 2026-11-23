@@ -1,3 +1,6 @@
+/* eslint-disable */
+// @ts-nocheck
+// Reference snippet: the two lines above keep the host repo's linter off this file. Drop them when copying.
 // CommonJS version (package.json has no "type": "module"). For ESM, see client.mjs — there the
 // .env load must be the first import, and this ordering note does not apply.
 //

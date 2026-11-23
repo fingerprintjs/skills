@@ -1,3 +1,6 @@
+/* eslint-disable */
+// @ts-nocheck
+// Reference snippet: the two lines above keep the host repo's linter off this file. Drop them when copying.
 // src/fingerprint.js — start the agent once at app startup, export the instance.
 // `start()` returns the agent synchronously; the agent script itself downloads in the
 // background, and `get()` waits for it. The region MUST match your workspace

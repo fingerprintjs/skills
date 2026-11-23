@@ -1,3 +1,6 @@
+/* eslint-disable */
+// @ts-nocheck
+// Reference snippet: the two lines above keep the host repo's linter off this file. Drop them when copying.
 // Signal rules: one small function per scenario over the server-verified event from getEvent().
 // Each returns { ok, reason?, message? }. Compose them after protectAction() has passed.
 

@@ -1,3 +1,6 @@
+/* eslint-disable */
+// @ts-nocheck
+// Reference snippet: the two lines above keep the host repo's linter off this file. Drop them when copying.
 // Per-action protection: the gate every Fingerprint use-case runs before its own logic.
 // Stack-agnostic Node; `client` is a FingerprintServerApiClient (see fingerprint-node).
 //

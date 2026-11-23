@@ -1,3 +1,6 @@
+/* eslint-disable */
+// @ts-nocheck
+// Reference snippet: the two lines above keep the host repo's linter off this file. Drop them when copying.
 // Client — attach your data to the identification at the moment of a sensitive action.
 // `tag` is free-form context; `linkedId` groups related events. Both are optional.
 import { useVisitorData } from '@fingerprint/react'

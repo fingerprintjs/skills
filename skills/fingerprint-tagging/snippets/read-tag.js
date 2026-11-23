@@ -1,3 +1,6 @@
+/* eslint-disable */
+// @ts-nocheck
+// Reference snippet: the two lines above keep the host repo's linter off this file. Drop them when copying.
 // Server — verify the event first, then read back the tag/linkedId you set on the client.
 // Only trust the tag after the event itself verifies (see fingerprint-node verifyEvent).
 const { fingerprint } = require('./client')

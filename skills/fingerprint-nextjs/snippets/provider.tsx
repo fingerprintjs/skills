@@ -1,3 +1,6 @@
+/* eslint-disable */
+// @ts-nocheck
+// Reference snippet: the two lines above keep the host repo's linter off this file. Drop them when copying.
 // app/fingerprint-provider.tsx — a 'use client' wrapper around FingerprintProvider.
 // The provider needs to run in the browser, so it can't live directly in the server-rendered
 // layout. Region MUST match your workspace ('us' | 'eu' | 'ap') or identification fails with

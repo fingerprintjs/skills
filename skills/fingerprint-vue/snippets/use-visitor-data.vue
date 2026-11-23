@@ -1,3 +1,5 @@
+<!-- eslint-disable -->
+<!-- Reference snippet: the line above keeps the host repo's linter off this file. Drop it when copying. -->
 <!-- Identify at the moment of a sensitive action, rather than on mount. -->
 <script setup>
 import { useVisitorData } from '@fingerprint/vue'

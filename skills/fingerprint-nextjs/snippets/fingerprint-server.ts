@@ -1,3 +1,6 @@
+/* eslint-disable */
+// @ts-nocheck
+// Reference snippet: the two lines above keep the host repo's linter off this file. Drop them when copying.
 // lib/fingerprint-server.ts — server-only Fingerprint client + verification helper.
 // Imported only from Route Handlers / Server Actions, never from a 'use client' file.
 // Next.js auto-loads .env.local, so no dotenv. Region MUST match your workspace or lookups fail —

@@ -1,3 +1,6 @@
+/* eslint-disable */
+// @ts-nocheck
+// Reference snippet: the two lines above keep the host repo's linter off this file. Drop them when copying.
 // One per device: a visitorId may claim a thing once (optionally once per scope value).
 // `visitorId` comes from protectAction() (fingerprint-protect-action), never from the browser.
 //

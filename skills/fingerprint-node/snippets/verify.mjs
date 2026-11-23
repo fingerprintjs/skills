@@ -1,3 +1,6 @@
+/* eslint-disable */
+// @ts-nocheck
+// Reference snippet: the two lines above keep the host repo's linter off this file. Drop them when copying.
 import { fingerprint } from './client.mjs'
 
 const MAX_AGE_MS = 2 * 60 * 1000
