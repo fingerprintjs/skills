@@ -1,3 +1,6 @@
+/* eslint-disable */
+// @ts-nocheck
+// Reference snippet: the two lines above keep the host repo's linter off this file. Drop them when copying.
 // v4: serve the JS Agent from your own domain, so identification runs in the same first-party
 // context as the rest of your app. Only ever point this at a domain you operate.
 // The single `endpoints` option replaces v3's scriptUrlPattern / endpoint / tlsEndpoint / disableTls.

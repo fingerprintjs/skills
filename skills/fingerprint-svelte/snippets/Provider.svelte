@@ -1,3 +1,5 @@
+<!-- eslint-disable -->
+<!-- Reference snippet: the line above keeps the host repo's linter off this file. Drop it when copying. -->
 <!-- Mount once at the app root (e.g. src/App.svelte, or +layout.svelte in SvelteKit).
      The region MUST match your workspace ('us' | 'eu' | 'ap') or identification fails with
      "API key not found" — read it from env, don't hardcode it.

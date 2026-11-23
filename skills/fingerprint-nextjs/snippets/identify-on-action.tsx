@@ -1,3 +1,6 @@
+/* eslint-disable */
+// @ts-nocheck
+// Reference snippet: the two lines above keep the host repo's linter off this file. Drop them when copying.
 // A client component: identify at the moment of a sensitive action and send event_id to the
 // server. immediate: false → don't identify on mount; only when we call getData().
 'use client'

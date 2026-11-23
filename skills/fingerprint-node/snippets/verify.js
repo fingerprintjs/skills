@@ -1,3 +1,6 @@
+/* eslint-disable */
+// @ts-nocheck
+// Reference snippet: the two lines above keep the host repo's linter off this file. Drop them when copying.
 // Server-side verification of an event_id sent by the frontend. Returns a trust decision.
 const { fingerprint } = require('./client')
 

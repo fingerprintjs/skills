@@ -1,3 +1,6 @@
+/* eslint-disable */
+// @ts-nocheck
+// Reference snippet: the two lines above keep the host repo's linter off this file. Drop them when copying.
 // app/api/login/route.ts — verify the event_id before running the sensitive handler.
 import { verifyEvent } from '@/lib/fingerprint-server'
 

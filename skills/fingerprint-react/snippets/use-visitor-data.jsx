@@ -1,3 +1,6 @@
+/* eslint-disable */
+// @ts-nocheck
+// Reference snippet: the two lines above keep the host repo's linter off this file. Drop them when copying.
 // Identify at the moment of a sensitive action, rather than on mount.
 import { useVisitorData } from '@fingerprint/react'
 

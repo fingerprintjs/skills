@@ -1,3 +1,6 @@
+# ruff: noqa
+# flake8: noqa
+# Reference snippet: the two lines above keep the host repo's linter off this file. Drop them when copying.
 # Load .env before reading any keys (call this before the client is constructed).
 import os
 from dotenv import load_dotenv

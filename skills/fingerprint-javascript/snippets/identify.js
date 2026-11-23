@@ -1,3 +1,6 @@
+/* eslint-disable */
+// @ts-nocheck
+// Reference snippet: the two lines above keep the host repo's linter off this file. Drop them when copying.
 // src/main.js — identify the visitor. Each get() call is a billable identification event,
 // so call it where you need the result (on load, or on an action) rather than on every render.
 import { fp } from './fingerprint.js'

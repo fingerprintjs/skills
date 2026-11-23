@@ -1,3 +1,6 @@
+/* eslint-disable */
+// @ts-nocheck
+// Reference snippet: the two lines above keep the host repo's linter off this file. Drop them when copying.
 // Compose Smart Signals into a per-action policy. Returns a decision: 'allow' | 'step_up' | 'block'.
 // Run this on the *verified* event from getEvent(eventId) — never on client-reported values.
 

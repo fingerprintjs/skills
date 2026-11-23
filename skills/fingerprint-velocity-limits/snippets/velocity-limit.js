@@ -1,3 +1,6 @@
+/* eslint-disable */
+// @ts-nocheck
+// Reference snippet: the two lines above keep the host repo's linter off this file. Drop them when copying.
 // Velocity limit per device: count an action per visitorId within a window, refuse past a limit.
 // `visitorId` comes from protectAction() (fingerprint-protect-action), never from the browser.
 //

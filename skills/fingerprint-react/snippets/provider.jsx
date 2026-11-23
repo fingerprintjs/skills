@@ -1,3 +1,6 @@
+/* eslint-disable */
+// @ts-nocheck
+// Reference snippet: the two lines above keep the host repo's linter off this file. Drop them when copying.
 // Mount once at the app root (e.g. src/main.jsx). The region MUST match your workspace
 // ('us' | 'eu' | 'ap') or identification fails with "API key not found" — read it from env,
 // don't hardcode it.

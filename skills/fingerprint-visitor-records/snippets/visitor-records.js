@@ -1,3 +1,6 @@
+/* eslint-disable */
+// @ts-nocheck
+// Reference snippet: the two lines above keep the host repo's linter off this file. Drop them when copying.
 // Visitor records: store the verified visitorId on your own rows; enforce bans; pull device history.
 // `visitorId` comes from the server-side event (getEvent), never from the browser.
 //

@@ -1,3 +1,6 @@
+/* eslint-disable */
+// @ts-nocheck
+// Reference snippet: the two lines above keep the host repo's linter off this file. Drop them when copying.
 // app/layout.tsx — the root layout stays a server component; wrap {children} in the client
 // provider so the whole app can call useVisitorData(). Mount the provider once, here only.
 import { FingerprintClientProvider } from './fingerprint-provider'
